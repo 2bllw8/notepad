@@ -32,8 +32,8 @@ ext {
     minSdkVersion = 27
     targetSdkVersion = 31
 
-    versionCode = 7
-    versionName = '1.6'
+    versionCode = 1
+    versionName = '1.0'
 
     sourceCompatibilityVersion = JavaVersion.VERSION_11
     targetCompatibilityVersion = JavaVersion.VERSION_11
