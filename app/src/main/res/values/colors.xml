@@ -3,8 +3,9 @@
   ~ SPDX-License-Identifier: GPL-3.0-only
   -->
 <resources>
-    <color name="shortcutIconForeground">#C85125</color>
-    <color name="shellIconBg">#C85125</color>
+    <color name="shortcutIconForeground">#525C7E</color>
+    <color name="shellIconBg">#525C7E</color>
+    <color name="shellIconFg">#F9EBF0</color>
 
     <color name="markdownCode">#328C8C8C</color>
     <color name="markdownQuote">#839145</color>
