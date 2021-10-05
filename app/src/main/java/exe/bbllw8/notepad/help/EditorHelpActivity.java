@@ -7,8 +7,10 @@ package exe.bbllw8.notepad.help;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import exe.bbllw8.notepad.R;
@@ -27,7 +29,6 @@ public final class EditorHelpActivity extends Activity {
         final TextView contentView = findViewById(R.id.helpContent);
         final ActionBar actionBar = getActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayShowHomeEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
@@ -40,5 +41,16 @@ public final class EditorHelpActivity extends Activity {
     protected void onDestroy() {
         taskExecutor.terminate();
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, @NonNull MenuItem item) {
+        final int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else {
+            return super.onMenuItemSelected(featureId, item);
+        }
     }
 }
