@@ -26,14 +26,14 @@ final class LoadHelpContentTextTask implements Callable<Optional<CharSequence>> 
 
     public LoadHelpContentTextTask(@NonNull Context context) {
         this.resources = context.getResources();
-        this.formatter = new MarkdownFormatter(context.getColor(R.color.markdownCode),
-                context.getColor(R.color.markdownQuote));
+        this.formatter = new MarkdownFormatter(context.getColor(R.color.markdown_code),
+                context.getColor(R.color.markdown_quote));
     }
 
     @Override
     public Optional<CharSequence> call() {
         final StringBuilder sb = new StringBuilder();
-        try (InputStream reader = resources.openRawResource(R.raw.editor_help)) {
+        try (InputStream reader = resources.openRawResource(R.raw.help_manual)) {
             final byte[] buffer = new byte[4096];
             int read = reader.read(buffer, 0, 4096);
             while (read > 0) {

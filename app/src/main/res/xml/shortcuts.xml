@@ -7,7 +7,7 @@
         android:enabled="true"
         android:icon="@drawable/ic_shortcut_open"
         android:shortcutDisabledMessage="@string/shortcut_open_disabled"
-        android:shortcutId="newFile"
+        android:shortcutId="new_file"
         android:shortcutLongLabel="@string/shortcut_open_long"
         android:shortcutShortLabel="@string/shortcut_open_short">
 

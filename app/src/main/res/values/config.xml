@@ -4,9 +4,9 @@
   -->
 <resources>
     <!-- Max file size: 8MB -->
-    <integer name="editor_max_file_size">8388608</integer>
+    <integer name="config_max_file_size">8388608</integer>
     <!-- History buffer size -->
-    <integer name="editor_history_buffer_size">128</integer>
-    <!-- Enable the editor shell by default -->
-    <bool name="shell_enabled_default">false</bool>
+    <integer name="config_history_buffer_size">128</integer>
+    <!-- Enable the shell by default -->
+    <bool name="config_shell_enabled_default">true</bool>
 </resources>

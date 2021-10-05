@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import java.util.function.Consumer;
 
 public final class EditorConfig {
-    private static final String CONFIG_PREFERENCES = "editor_config";
+    private static final String CONFIG_PREFERENCES = "config";
 
     private static final String KEY_SIZE = "text_size";
     private static final String KEY_STYLE = "text_style";

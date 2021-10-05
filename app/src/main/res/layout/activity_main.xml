@@ -76,7 +76,7 @@
                 android:imeOptions="actionDone|flagNoFullscreen"
                 android:importantForAutofill="no"
                 android:inputType="textMultiLine|textImeMultiLine"
-                android:maxLength="@integer/editor_max_file_size"
+                android:maxLength="@integer/config_max_file_size"
                 android:padding="6dp"
                 android:singleLine="false"
                 tools:fontFamily="monospace"

@@ -4,108 +4,108 @@
   -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/editorUndo"
+        android:id="@+id/action_undo"
         android:alphabeticModifiers="CTRL"
         android:alphabeticShortcut="z"
         android:enabled="false"
         android:icon="@drawable/ic_action_undo"
         android:showAsAction="ifRoom"
-        android:title="@string/editor_action_undo" />
+        android:title="@string/action_undo" />
 
     <item
-        android:id="@+id/editorSave"
+        android:id="@+id/menu_save"
         android:alphabeticModifiers="CTRL"
         android:alphabeticShortcut="s"
         android:enabled="false"
         android:icon="@drawable/ic_action_save"
         android:showAsAction="always"
-        android:title="@string/editor_action_save" />
+        android:title="@string/action_save" />
 
     <item
-        android:id="@+id/editorNew"
+        android:id="@+id/menu_new"
         android:alphabeticModifiers="CTRL"
         android:alphabeticShortcut="n"
         android:showAsAction="never"
-        android:title="@string/editor_menu_new" />
+        android:title="@string/menu_new" />
 
     <item
-        android:id="@+id/editorOpen"
+        android:id="@+id/menu_open"
         android:alphabeticModifiers="CTRL"
         android:alphabeticShortcut="o"
         android:showAsAction="never"
-        android:title="@string/editor_menu_open" />
+        android:title="@string/menu_open" />
 
     <item
-        android:id="@+id/editorFontSize"
+        android:id="@+id/menu_font_size"
         android:showAsAction="never"
-        android:title="@string/editor_menu_size">
+        android:title="@string/menu_font_size">
         <menu>
             <group android:checkableBehavior="single">
                 <item
-                    android:id="@+id/editorFontSizeSmall"
-                    android:title="@string/editor_menu_size_small" />
+                    android:id="@+id/menu_font_size_small"
+                    android:title="@string/menu_font_size_small" />
                 <item
-                    android:id="@+id/editorFontSizeMedium"
+                    android:id="@+id/menu_font_size_medium"
                     android:checked="true"
-                    android:title="@string/editor_menu_size_medium" />
+                    android:title="@string/menu_font_size_medium" />
                 <item
-                    android:id="@+id/editorFontSizeLarge"
-                    android:title="@string/editor_menu_size_large" />
+                    android:id="@+id/menu_font_size_large"
+                    android:title="@string/menu_font_size_large" />
             </group>
         </menu>
     </item>
 
     <item
-        android:id="@+id/editorFontStyle"
+        android:id="@+id/menu_font_style"
         android:showAsAction="never"
-        android:title="@string/editor_menu_font">
+        android:title="@string/menu_font_style">
         <menu>
             <group android:checkableBehavior="single">
                 <item
-                    android:id="@+id/editorFontStyleMono"
+                    android:id="@+id/menu_font_style_mono"
                     android:checked="true"
-                    android:title="@string/editor_menu_font_mono" />
+                    android:title="@string/menu_font_style_mono" />
                 <item
-                    android:id="@+id/editorFontStyleSans"
-                    android:title="@string/editor_menu_font_sans" />
+                    android:id="@+id/menu_font_style_sans"
+                    android:title="@string/menu_font_style_sans" />
                 <item
-                    android:id="@+id/editorFontStyleSerif"
-                    android:title="@string/editor_menu_font_serif" />
+                    android:id="@+id/menu_font_style_serif"
+                    android:title="@string/menu_font_style_serif" />
             </group>
         </menu>
     </item>
 
     <item
-        android:id="@+id/editorOptions"
+        android:id="@+id/menu_option"
         android:showAsAction="never"
-        android:title="@string/editor_menu_options">
+        android:title="@string/menu_option">
         <menu>
             <item
-                android:id="@+id/editorAutoPair"
+                android:id="@+id/menu_option_auto_pair"
                 android:checkable="true"
                 android:showAsAction="never"
-                android:title="@string/editor_menu_auto_pair" />
+                android:title="@string/menu_option_auto_pair" />
 
             <item
-                android:id="@+id/editorShowCommandBar"
+                android:id="@+id/menu_option_command_bar_show"
                 android:alphabeticModifiers="CTRL"
                 android:alphabeticShortcut="/"
                 android:checkable="true"
                 android:showAsAction="never"
-                android:title="@string/editor_menu_command" />
+                android:title="@string/menu_option_command_bar_show" />
 
             <item
-                android:id="@+id/editorShowShell"
+                android:id="@+id/menu_option_shell_show"
                 android:checkable="true"
                 android:showAsAction="never"
-                android:title="@string/editor_menu_show_shell" />
+                android:title="@string/menu_option_shell_show" />
         </menu>
     </item>
 
     <item
-        android:id="@+id/editorHelp"
+        android:id="@+id/menu_help"
         android:alphabeticModifiers="FUNCTION"
         android:alphabeticShortcut="1"
         android:showAsAction="never"
-        android:title="@string/editor_menu_help" />
+        android:title="@string/menu_help" />
 </menu>

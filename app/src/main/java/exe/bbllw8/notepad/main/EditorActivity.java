@@ -66,8 +66,8 @@ public final class EditorActivity extends Activity implements
         EditorConfigListener,
         EditorCommandsExecutor,
         TextWatcher {
-    private static final String KEY_EDITOR_FILE = "editor_file";
-    private static final String KEY_HISTORY_STATE = "editor_history";
+    private static final String KEY_EDITOR_FILE = "file";
+    private static final String KEY_HISTORY_STATE = "history";
     private static final String TYPE_PLAIN_TEXT = "text/plain";
     private static final int REQUEST_CREATE_FILE_AND_QUIT = 10;
     private static final int REQUEST_CREATE_FILE = 11;
@@ -118,10 +118,10 @@ public final class EditorActivity extends Activity implements
 
         editorConfig = new EditorConfig(this, this);
         editorHistory = new EditorHistory(textEditorView::getEditableText,
-                getResources().getInteger(R.integer.editor_history_buffer_size));
+                getResources().getInteger(R.integer.config_history_buffer_size));
         autoPair = new AutoPair(textEditorView::getEditableText);
 
-        summaryView.setText(getString(R.string.editor_summary_info, 1, 1));
+        summaryView.setText(getString(R.string.summary_info, 1, 1));
         textEditorView.setOnCursorChanged(this::updateSummary);
         commandField.setOnKeyListener((v, code, ev) -> {
             if (code == KeyEvent.KEYCODE_ENTER) {
@@ -136,7 +136,7 @@ public final class EditorActivity extends Activity implements
 
         if (actionBar != null) {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_action_close);
-            actionBar.setHomeActionContentDescription(R.string.editor_action_quit);
+            actionBar.setHomeActionContentDescription(R.string.action_quit);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
@@ -203,17 +203,17 @@ public final class EditorActivity extends Activity implements
             return super.onCreateOptionsMenu(menu);
         } else {
             menuInflater.inflate(R.menu.editor_menu, menu);
-            undoMenuItem = menu.findItem(R.id.editorUndo);
-            saveMenuItem = menu.findItem(R.id.editorSave);
-            sizeSmallMenuItem = menu.findItem(R.id.editorFontSizeSmall);
-            sizeMediumMenuItem = menu.findItem(R.id.editorFontSizeMedium);
-            sizeLargeMenuItem = menu.findItem(R.id.editorFontSizeLarge);
-            styleMonoMenuItem = menu.findItem(R.id.editorFontStyleMono);
-            styleSansMenuItem = menu.findItem(R.id.editorFontStyleSans);
-            styleSerifMenuItem = menu.findItem(R.id.editorFontStyleSerif);
-            autoPairMenuItem = menu.findItem(R.id.editorAutoPair);
-            showCommandBarMenuItem = menu.findItem(R.id.editorShowCommandBar);
-            final MenuItem showShellMenuItem = menu.findItem(R.id.editorShowShell);
+            undoMenuItem = menu.findItem(R.id.action_undo);
+            saveMenuItem = menu.findItem(R.id.menu_save);
+            sizeSmallMenuItem = menu.findItem(R.id.menu_font_size_small);
+            sizeMediumMenuItem = menu.findItem(R.id.menu_font_size_medium);
+            sizeLargeMenuItem = menu.findItem(R.id.menu_font_size_large);
+            styleMonoMenuItem = menu.findItem(R.id.menu_font_style_mono);
+            styleSansMenuItem = menu.findItem(R.id.menu_font_style_sans);
+            styleSerifMenuItem = menu.findItem(R.id.menu_font_style_serif);
+            autoPairMenuItem = menu.findItem(R.id.menu_option_auto_pair);
+            showCommandBarMenuItem = menu.findItem(R.id.menu_option_command_bar_show);
+            final MenuItem showShellMenuItem = menu.findItem(R.id.menu_option_shell_show);
 
             switch (editorConfig.getTextSize()) {
                 case Config.Size.LARGE:
@@ -251,47 +251,47 @@ public final class EditorActivity extends Activity implements
     @Override
     public boolean onMenuItemSelected(int featureId, @NonNull MenuItem item) {
         final int id = item.getItemId();
-        if (id == R.id.editorSave) {
+        if (id == R.id.menu_save) {
             saveContents(false);
             return true;
-        } else if (id == R.id.editorUndo) {
+        } else if (id == R.id.action_undo) {
             undoAction();
             return true;
-        } else if (id == R.id.editorFontSizeSmall) {
+        } else if (id == R.id.menu_font_size_small) {
             editorConfig.setTextSize(Config.Size.SMALL);
             return true;
-        } else if (id == R.id.editorFontSizeMedium) {
+        } else if (id == R.id.menu_font_size_medium) {
             editorConfig.setTextSize(Config.Size.MEDIUM);
             return true;
-        } else if (id == R.id.editorFontSizeLarge) {
+        } else if (id == R.id.menu_font_size_large) {
             editorConfig.setTextSize(Config.Size.LARGE);
             return true;
-        } else if (id == R.id.editorFontStyleMono) {
+        } else if (id == R.id.menu_font_style_mono) {
             editorConfig.setTextStyle(Config.Style.MONO);
             return true;
-        } else if (id == R.id.editorFontStyleSans) {
+        } else if (id == R.id.menu_font_style_sans) {
             editorConfig.setTextStyle(Config.Style.SANS);
             return true;
-        } else if (id == R.id.editorFontStyleSerif) {
+        } else if (id == R.id.menu_font_style_serif) {
             editorConfig.setTextStyle(Config.Style.SERIF);
             return true;
-        } else if (id == R.id.editorAutoPair) {
+        } else if (id == R.id.menu_option_auto_pair) {
             editorConfig.setAutoPairEnabled(!item.isChecked());
             return true;
-        } else if (id == R.id.editorShowCommandBar) {
+        } else if (id == R.id.menu_option_command_bar_show) {
             editorConfig.setShowCommandBar(!item.isChecked());
             return true;
-        } else if (id == R.id.editorNew) {
+        } else if (id == R.id.menu_new) {
             openNewWindow();
             return true;
-        } else if (id == R.id.editorOpen) {
+        } else if (id == R.id.menu_open) {
             openFileSelector();
             return true;
-        } else if (id == R.id.editorShowShell) {
+        } else if (id == R.id.menu_option_shell_show) {
             EditorShell.setEnabled(this, !item.isChecked());
             item.setChecked(!item.isChecked());
             return true;
-        } else if (id == R.id.editorHelp) {
+        } else if (id == R.id.menu_help) {
             startActivity(new Intent(this, EditorHelpActivity.class));
             return true;
         } else if (id == android.R.id.home) {
@@ -378,7 +378,7 @@ public final class EditorActivity extends Activity implements
     /* File loading */
 
     private void loadFile(@NonNull Uri uri) {
-        summaryView.setText(R.string.editor_summary_loading);
+        summaryView.setText(R.string.summary_loading);
         loadView.setVisibility(View.VISIBLE);
 
         taskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri),
@@ -387,7 +387,7 @@ public final class EditorActivity extends Activity implements
     }
 
     private void readFile(@NonNull EditorFile editorFile) {
-        final int maxSize = getResources().getInteger(R.integer.editor_max_file_size);
+        final int maxSize = getResources().getInteger(R.integer.config_max_file_size);
         taskExecutor.runTask(new EditorFileReaderTask(getContentResolver(), editorFile, maxSize),
                 result -> result.left()
                         .map(e -> {
@@ -504,8 +504,8 @@ public final class EditorActivity extends Activity implements
                                boolean quitWhenSaved) {
         final AlertDialog savingDialog = new AlertDialog.Builder(this)
                 .setCancelable(false)
-                .setTitle(R.string.editor_action_save)
-                .setMessage(getString(R.string.editor_save_in_progress, editorFile.getName()))
+                .setTitle(R.string.action_save)
+                .setMessage(getString(R.string.save_in_progress, editorFile.getName()))
                 .show();
 
         final String contents = textEditorView.getText().toString();
@@ -553,9 +553,9 @@ public final class EditorActivity extends Activity implements
         taskExecutor.runTask(new GetCursorCoordinatesTask(content, cursorStart),
                 point -> {
                     final String summary = cursorStart == cursorEnd
-                            ? getString(R.string.editor_summary_info,
+                            ? getString(R.string.summary_info,
                             point.y, point.x)
-                            : getString(R.string.editor_summary_select,
+                            : getString(R.string.summary_select,
                             cursorEnd - cursorStart, point.y, point.x);
                     summaryView.post(() -> summaryView.setText(summary));
                 });
@@ -577,16 +577,16 @@ public final class EditorActivity extends Activity implements
         final MenuItem menuItem;
         switch (newSize) {
             case Config.Size.SMALL:
-                newTextSizeRes = R.dimen.fontSizeSmall;
+                newTextSizeRes = R.dimen.font_size_small;
                 menuItem = sizeSmallMenuItem;
                 break;
             case Config.Size.LARGE:
-                newTextSizeRes = R.dimen.fontSizeLarge;
+                newTextSizeRes = R.dimen.font_size_large;
                 menuItem = sizeLargeMenuItem;
                 break;
             case Config.Size.MEDIUM:
             default:
-                newTextSizeRes = R.dimen.fontSizeMedium;
+                newTextSizeRes = R.dimen.font_size_medium;
                 menuItem = sizeMediumMenuItem;
                 break;
         }
@@ -646,7 +646,7 @@ public final class EditorActivity extends Activity implements
                 .map(this::runCommand)
                 .orElse(false);
         if (!success) {
-            showTmpMessage(R.string.editor_command_unknown);
+            showTmpMessage(R.string.command_unknown);
         }
     }
 
@@ -662,7 +662,7 @@ public final class EditorActivity extends Activity implements
                     textEditorView.requestFocus();
                     textEditorView.setSelection(range.getLower(), range.getUpper());
                 },
-                () -> showTmpMessage(R.string.editor_command_find_none));
+                () -> showTmpMessage(R.string.command_find_none));
     }
 
     @Override
@@ -685,9 +685,9 @@ public final class EditorActivity extends Activity implements
     public void runSetCommand(@NonNull EditorCommand.Set command) {
         final boolean success = editorConfig.setByKeyVal(command.getKey(), command.getValue());
         if (success) {
-            showTmpMessage(R.string.editor_command_set_success);
+            showTmpMessage(R.string.command_set_success);
         } else {
-            showTmpMessage(R.string.editor_command_unknown);
+            showTmpMessage(R.string.command_unknown);
         }
     }
 
@@ -729,7 +729,7 @@ public final class EditorActivity extends Activity implements
     /* Dialogs */
 
     private void showSavedMessage(boolean finishOnShown) {
-        Toast.makeText(this, R.string.editor_save_success, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.save_success, Toast.LENGTH_LONG).show();
         if (finishOnShown) {
             finish();
         }
@@ -737,18 +737,18 @@ public final class EditorActivity extends Activity implements
 
     private void showQuitMessage() {
         final String fileName = editorFile == null
-                ? getString(R.string.editor_title_generic)
+                ? getString(R.string.title_generic)
                 : '"' + editorFile.getName() + '"';
 
         new AlertDialog.Builder(this, R.style.DialogTheme)
                 .setTitle(fileName)
-                .setMessage(getString(R.string.editor_save_quit_ask, fileName))
-                .setPositiveButton(R.string.editor_action_save_and_quit,
+                .setMessage(getString(R.string.save_quit_ask, fileName))
+                .setPositiveButton(R.string.action_save_and_quit,
                         (d, which) -> {
                             d.dismiss();
                             saveContents(true);
                         })
-                .setNegativeButton(R.string.editor_action_quit,
+                .setNegativeButton(R.string.action_quit,
                         (d, which) -> {
                             d.dismiss();
                             finish();
@@ -759,20 +759,20 @@ public final class EditorActivity extends Activity implements
     }
 
     private void showOpenErrorMessage() {
-        showFatalErrorMessage(getString(R.string.editor_error_open));
+        showFatalErrorMessage(getString(R.string.error_open));
     }
 
     private void showReadErrorMessage(@NonNull EditorFile editorFile) {
-        showFatalErrorMessage(getString(R.string.editor_error_read, editorFile.getName()));
+        showFatalErrorMessage(getString(R.string.error_read, editorFile.getName()));
     }
 
     private void showWriteErrorMessage(@NonNull EditorFile editorFile) {
-        showFatalErrorMessage(getString(R.string.editor_save_failed, editorFile.getName()));
+        showFatalErrorMessage(getString(R.string.save_failed, editorFile.getName()));
     }
 
     private void showFatalErrorMessage(@NonNull CharSequence message) {
         new AlertDialog.Builder(this)
-                .setTitle(R.string.editor_error_title)
+                .setTitle(R.string.error_title)
                 .setMessage(message)
                 .setOnDismissListener(d -> finish())
                 .show();
