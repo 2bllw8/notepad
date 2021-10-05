@@ -1,0 +1,22 @@
+// Copyright (c) 2021 2bllw8
+// SPDX-License-Identifier: GPL-3.0-only
+
+android_app {
+    name: "notepad",
+    manifest: "app/src/main/AndroidManifest.xml",
+    sdk_version: "31",
+    srcs: [
+        "app/src/main/java/exe/bbllw8/notepad/**/*.java",
+    ],
+    resource_dirs: [
+        "app/src/main/res",
+    ],
+    optimize: {
+        proguard_flags_files: [
+            "app/proguard-rules.pro",
+        ],
+    },
+    static_libs: [
+        "androidx.annotation_annotation",
+    ],
+}

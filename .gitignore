@@ -1,0 +1,22 @@
+.DS_Store
+
+# Android Studio
+*.iml
+/.idea
+
+# Bazel
+/.aswb
+/.ijwb
+/bazel-*
+
+# Gradle
+.gradle
+/local.properties
+
+# Sign key
+*.jks
+
+# VSCode
+*/.classpath
+*/.project
+*/.settings

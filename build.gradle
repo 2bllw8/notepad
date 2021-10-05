@@ -1,0 +1,48 @@
+/*
+ * Copyright (c) 2021 2bllw8
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+buildscript {
+    repositories {
+        mavenCentral()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.0.2'
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+final Properties localProps = new Properties()
+if (file('local.properties').exists()) {
+    localProps.load(file('local.properties').newDataInputStream())
+}
+
+ext {
+    minSdkVersion = 27
+    targetSdkVersion = 31
+
+    versionCode = 7
+    versionName = '1.6'
+
+    sourceCompatibilityVersion = JavaVersion.VERSION_11
+    targetCompatibilityVersion = JavaVersion.VERSION_11
+
+    libAndroidxAnnotation = 'androidx.annotation:annotation:1.2.0'
+    libEither = 'io.github.2bllw8:either:2.0.0'
+
+    keyStoreFile = file(localProps.getProperty('androidStoreFile'))
+    keyStorePassword = localProps.getProperty('androidStorePassword')
+    keyAlias = localProps.getProperty('androidKeyAlias')
+    keyPassword = localProps.getProperty('androidKeyPassword')
+}

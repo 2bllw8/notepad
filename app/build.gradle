@@ -1,0 +1,63 @@
+/*
+ * Copyright (c) 2021 2bllw8
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdkVersion rootProject.ext.targetSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+    }
+
+    buildFeatures {
+        buildConfig = false
+    }
+
+    compileOptions {
+        sourceCompatibility rootProject.ext.sourceCompatibilityVersion
+        targetCompatibility rootProject.ext.targetCompatibilityVersion
+    }
+
+    dependenciesInfo {
+        includeInApk false
+    }
+
+    signingConfigs {
+        if (rootProject.ext.keyStoreFile.exists()) {
+            notepad {
+                storeFile rootProject.ext.keyStoreFile
+                storePassword rootProject.ext.keyStorePassword
+                keyAlias rootProject.ext.keyAlias
+                keyPassword rootProject.ext.keyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            if (rootProject.ext.keyStoreFile.exists()) {
+                signingConfig = signingConfigs.named('notepad').get()
+            }
+        }
+        debug {
+            if (rootProject.ext.keyStoreFile.exists()) {
+                signingConfig = signingConfigs.named('notepad').get()
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation rootProject.ext.libAndroidxAnnotation
+    implementation rootProject.ext.libEither
+}
