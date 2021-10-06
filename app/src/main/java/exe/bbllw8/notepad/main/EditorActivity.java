@@ -38,6 +38,7 @@ import androidx.annotation.StringRes;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
+import java.util.Optional;
 
 import exe.bbllw8.notepad.R;
 import exe.bbllw8.notepad.auto.AutoPair;
@@ -58,13 +59,17 @@ import exe.bbllw8.notepad.io.EditorFile;
 import exe.bbllw8.notepad.io.EditorFileLoaderTask;
 import exe.bbllw8.notepad.io.EditorFileReaderTask;
 import exe.bbllw8.notepad.io.EditorFileWriterTask;
+import exe.bbllw8.notepad.main.menu.EditorMenu;
+import exe.bbllw8.notepad.main.menu.EditorMenuActions;
 import exe.bbllw8.notepad.shell.EditorShell;
 import exe.bbllw8.notepad.shell.OpenFileActivity;
 import exe.bbllw8.notepad.task.TaskExecutor;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public final class EditorActivity extends Activity implements
         EditorConfigListener,
         EditorCommandsExecutor,
+        EditorMenuActions,
         TextWatcher {
     private static final String KEY_EDITOR_FILE = "file";
     private static final String KEY_HISTORY_STATE = "history";
@@ -89,19 +94,12 @@ public final class EditorActivity extends Activity implements
     private EditorHistory editorHistory;
     private AutoPair autoPair;
 
+    @NonNull
     private final TaskExecutor taskExecutor = new TaskExecutor();
+    @NonNull
     private final EditorCommandParser editorCommandParser = new EditorCommandParser();
-
-    private MenuItem undoMenuItem;
-    private MenuItem saveMenuItem;
-    private MenuItem sizeSmallMenuItem;
-    private MenuItem sizeMediumMenuItem;
-    private MenuItem sizeLargeMenuItem;
-    private MenuItem styleMonoMenuItem;
-    private MenuItem styleSansMenuItem;
-    private MenuItem styleSerifMenuItem;
-    private MenuItem autoPairMenuItem;
-    private MenuItem showCommandBarMenuItem;
+    @NonNull
+    private Optional<EditorMenu> editorMenu = Optional.empty();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -202,48 +200,18 @@ public final class EditorActivity extends Activity implements
         if (menuInflater == null) {
             return super.onCreateOptionsMenu(menu);
         } else {
-            menuInflater.inflate(R.menu.editor_menu, menu);
-            undoMenuItem = menu.findItem(R.id.action_undo);
-            saveMenuItem = menu.findItem(R.id.menu_save);
-            sizeSmallMenuItem = menu.findItem(R.id.menu_font_size_small);
-            sizeMediumMenuItem = menu.findItem(R.id.menu_font_size_medium);
-            sizeLargeMenuItem = menu.findItem(R.id.menu_font_size_large);
-            styleMonoMenuItem = menu.findItem(R.id.menu_font_style_mono);
-            styleSansMenuItem = menu.findItem(R.id.menu_font_style_sans);
-            styleSerifMenuItem = menu.findItem(R.id.menu_font_style_serif);
-            autoPairMenuItem = menu.findItem(R.id.menu_option_auto_pair);
-            showCommandBarMenuItem = menu.findItem(R.id.menu_option_command_bar_show);
-            final MenuItem showShellMenuItem = menu.findItem(R.id.menu_option_shell_show);
-
-            switch (editorConfig.getTextSize()) {
-                case Config.Size.LARGE:
-                    sizeLargeMenuItem.setChecked(true);
-                    break;
-                case Config.Size.MEDIUM:
-                    sizeMediumMenuItem.setChecked(true);
-                    break;
-                case Config.Size.SMALL:
-                    sizeSmallMenuItem.setChecked(true);
-                    break;
-            }
-            switch (editorConfig.getTextStyle()) {
-                case Config.Style.MONO:
-                    styleMonoMenuItem.setChecked(true);
-                    break;
-                case Config.Style.SANS:
-                    styleSansMenuItem.setChecked(true);
-                    break;
-                case Config.Style.SERIF:
-                    styleSerifMenuItem.setChecked(true);
-                    break;
-            }
-            autoPairMenuItem.setChecked(editorConfig.getAutoPairEnabled());
-            showCommandBarMenuItem.setChecked(editorConfig.getShowCommandBar());
-            showShellMenuItem.setChecked(EditorShell.isEnabled(this));
-
-            // If always dirty (snippet) always allow
-            saveMenuItem.setEnabled(alwaysAllowSave);
-
+            this.editorMenu = Optional.of(new EditorMenu(this, menu, menuInflater))
+                    .map(x -> {
+                        // Load settings
+                        x.onFontSizeChanged(editorConfig.getTextSize());
+                        x.onFontStyleChanged(editorConfig.getTextStyle());
+                        x.onAutoPairChanged(editorConfig.getAutoPairEnabled());
+                        x.onCommandBarVisibilityChanged(editorConfig.getShowCommandBar());
+                        x.onShellVisibilityChanged(EditorShell.isEnabled(this));
+                        // If always dirty (snippet / new blank file) always allow to save
+                        x.setSaveAllowed(alwaysAllowSave);
+                        return x;
+                    });
             return true;
         }
     }
@@ -251,55 +219,9 @@ public final class EditorActivity extends Activity implements
     @Override
     public boolean onMenuItemSelected(int featureId, @NonNull MenuItem item) {
         final int id = item.getItemId();
-        if (id == R.id.menu_save) {
-            saveContents(false);
-            return true;
-        } else if (id == R.id.action_undo) {
-            undoAction();
-            return true;
-        } else if (id == R.id.menu_font_size_small) {
-            editorConfig.setTextSize(Config.Size.SMALL);
-            return true;
-        } else if (id == R.id.menu_font_size_medium) {
-            editorConfig.setTextSize(Config.Size.MEDIUM);
-            return true;
-        } else if (id == R.id.menu_font_size_large) {
-            editorConfig.setTextSize(Config.Size.LARGE);
-            return true;
-        } else if (id == R.id.menu_font_style_mono) {
-            editorConfig.setTextStyle(Config.Style.MONO);
-            return true;
-        } else if (id == R.id.menu_font_style_sans) {
-            editorConfig.setTextStyle(Config.Style.SANS);
-            return true;
-        } else if (id == R.id.menu_font_style_serif) {
-            editorConfig.setTextStyle(Config.Style.SERIF);
-            return true;
-        } else if (id == R.id.menu_option_auto_pair) {
-            editorConfig.setAutoPairEnabled(!item.isChecked());
-            return true;
-        } else if (id == R.id.menu_option_command_bar_show) {
-            editorConfig.setShowCommandBar(!item.isChecked());
-            return true;
-        } else if (id == R.id.menu_new) {
-            openNewWindow();
-            return true;
-        } else if (id == R.id.menu_open) {
-            openFileSelector();
-            return true;
-        } else if (id == R.id.menu_option_shell_show) {
-            EditorShell.setEnabled(this, !item.isChecked());
-            item.setChecked(!item.isChecked());
-            return true;
-        } else if (id == R.id.menu_help) {
-            startActivity(new Intent(this, EditorHelpActivity.class));
-            return true;
-        } else if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        } else {
-            return super.onMenuItemSelected(featureId, item);
-        }
+        final boolean isChecked = item.isChecked();
+        return editorMenu.map(x -> x.onItemSelected(id, isChecked))
+                .orElseGet(() -> super.onMenuItemSelected(featureId, item));
     }
 
     @Override
@@ -375,6 +297,69 @@ public final class EditorActivity extends Activity implements
         setDirty();
     }
 
+    /* Menu actions */
+
+    @Override
+    public void saveContents() {
+        saveContents(false);
+    }
+
+    @Override
+    public void openNewWindow() {
+        startActivity(new Intent(this, EditorActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
+                .addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+    }
+
+    @Override
+    public void openFile() {
+        startActivity(new Intent(this, OpenFileActivity.class));
+    }
+
+    @Override
+    public void openHelp() {
+        startActivity(new Intent(this, EditorHelpActivity.class));
+    }
+
+    @Override
+    public void closeEditor() {
+        onBackPressed();
+    }
+
+    @Override
+    public void undoLastAction() {
+        editorHistory.undo();
+        if (!editorHistory.canUndo()) {
+            setNotDirty();
+        }
+    }
+
+    @Override
+    public void setFontSize(@Config.Size int size) {
+        editorConfig.setTextSize(size);
+    }
+
+    @Override
+    public void setFontStyle(@Config.Style int style) {
+        editorConfig.setTextStyle(style);
+    }
+
+    @Override
+    public void setAutoPairEnabled(boolean enabled) {
+        editorConfig.setAutoPairEnabled(enabled);
+    }
+
+    @Override
+    public void setCommandBarShown(boolean shown) {
+        editorConfig.setShowCommandBar(shown);
+    }
+
+    @Override
+    public void setShellShown(boolean shown) {
+        EditorShell.setEnabled(this, shown);
+    }
+
     /* File loading */
 
     private void loadFile(@NonNull Uri uri) {
@@ -402,16 +387,6 @@ public final class EditorActivity extends Activity implements
         taskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri),
                 editorFile -> saveNewFile(editorFile, quitWhenSaved),
                 this::showOpenErrorMessage);
-    }
-
-    private void openNewWindow() {
-        final Intent intent = new Intent(this, EditorActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-        startActivity(intent);
-    }
-
-    private void openFileSelector() {
-        startActivity(new Intent(this, OpenFileActivity.class));
     }
 
     private void openFileSaver(boolean quitWhenSaved) {
@@ -495,7 +470,7 @@ public final class EditorActivity extends Activity implements
 
             // We don't need save to be forcefully enabled anymore
             alwaysAllowSave = false;
-            saveMenuItem.setEnabled(false);
+            editorMenu.ifPresent(x -> x.setSaveAllowed(false));
         }
         writeContents(editorFile, quitWhenSaved);
     }
@@ -521,13 +496,6 @@ public final class EditorActivity extends Activity implements
                     }
                 });
 
-    }
-
-    private void undoAction() {
-        editorHistory.undo();
-        if (!editorHistory.canUndo()) {
-            setNotDirty();
-        }
     }
 
     /* UI */
@@ -574,68 +542,52 @@ public final class EditorActivity extends Activity implements
     @Override
     public void onTextSizeChanged(@Config.Size int newSize) {
         final int newTextSizeRes;
-        final MenuItem menuItem;
         switch (newSize) {
             case Config.Size.SMALL:
                 newTextSizeRes = R.dimen.font_size_small;
-                menuItem = sizeSmallMenuItem;
                 break;
             case Config.Size.LARGE:
                 newTextSizeRes = R.dimen.font_size_large;
-                menuItem = sizeLargeMenuItem;
                 break;
             case Config.Size.MEDIUM:
             default:
                 newTextSizeRes = R.dimen.font_size_medium;
-                menuItem = sizeMediumMenuItem;
                 break;
         }
         textEditorView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimensionPixelSize(newTextSizeRes));
-        if (menuItem != null) {
-            menuItem.setChecked(true);
-        }
+        editorMenu.ifPresent(x -> x.onFontSizeChanged(newSize));
     }
 
     @Override
     public void onTextStyleChanged(@Config.Style int newStyle) {
         final Typeface newTypeface;
-        final MenuItem menuItem;
         switch (newStyle) {
             case Config.Style.SANS:
                 newTypeface = Typeface.SANS_SERIF;
-                menuItem = styleSansMenuItem;
                 break;
             case Config.Style.SERIF:
                 newTypeface = Typeface.SERIF;
-                menuItem = styleSerifMenuItem;
                 break;
             case Config.Style.MONO:
             default:
                 newTypeface = Typeface.MONOSPACE;
-                menuItem = styleMonoMenuItem;
                 break;
         }
         textEditorView.setTypeface(newTypeface);
-        if (menuItem != null) {
-            menuItem.setChecked(true);
-        }
+        editorMenu.ifPresent(x -> x.onFontStyleChanged(newStyle));
     }
 
     @Override
     public void onAutoPairEnabledChanged(boolean enabled) {
         autoPair.setEnabled(enabled);
-        if (autoPairMenuItem != null) {
-            autoPairMenuItem.setChecked(enabled);
-        }
+        editorMenu.ifPresent(x -> x.onAutoPairChanged(enabled));
     }
 
     @Override
     public void onShowCommandBarChanged(boolean show) {
         commandBar.setVisibility(show ? View.VISIBLE : View.GONE);
-        if (showCommandBarMenuItem != null) {
-            showCommandBarMenuItem.setChecked(show);
-        }
+        editorMenu.ifPresent(x -> x.onCommandBarVisibilityChanged(show));
     }
 
     /* Commands */
@@ -713,16 +665,20 @@ public final class EditorActivity extends Activity implements
     private void setNotDirty() {
         if (dirty) {
             dirty = false;
-            undoMenuItem.setEnabled(false);
-            saveMenuItem.setEnabled(alwaysAllowSave);
+            editorMenu.ifPresent(x -> {
+                x.setUndoAllowed(false);
+                x.setSaveAllowed(alwaysAllowSave);
+            });
         }
     }
 
     private void setDirty() {
         if (!dirty) {
             dirty = true;
-            undoMenuItem.setEnabled(true);
-            saveMenuItem.setEnabled(true);
+            editorMenu.ifPresent(x -> {
+                x.setUndoAllowed(true);
+                x.setSaveAllowed(true);
+            });
         }
     }
 
