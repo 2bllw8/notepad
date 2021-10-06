@@ -80,9 +80,6 @@ public final class EditorActivity extends Activity implements
     private boolean dirty = false;
     private boolean alwaysAllowSave = false;
 
-    @Nullable
-    private EditorFile editorFile = null;
-
     private ActionBar actionBar;
     private View loadView;
     private TextView summaryView;
@@ -98,6 +95,8 @@ public final class EditorActivity extends Activity implements
     private final TaskExecutor taskExecutor = new TaskExecutor();
     @NonNull
     private final EditorCommandParser editorCommandParser = new EditorCommandParser();
+    @NonNull
+    private Optional<EditorFile> editorFile = Optional.empty();
     @NonNull
     private Optional<EditorMenu> editorMenu = Optional.empty();
 
@@ -167,9 +166,9 @@ public final class EditorActivity extends Activity implements
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (editorFile != null) {
-            outState.putParcelable(KEY_EDITOR_FILE, editorFile);
-        }
+        editorFile.ifPresent(x -> outState.putParcelable(KEY_EDITOR_FILE, x));
+
+        // Late initialization
         if (editorHistory != null) {
             outState.putParcelable(KEY_HISTORY_STATE, editorHistory.saveInstance());
         }
@@ -178,11 +177,10 @@ public final class EditorActivity extends Activity implements
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        final EditorFile savedEditorFile = savedInstanceState.getParcelable(KEY_EDITOR_FILE);
-        if (savedEditorFile != null) {
-            editorFile = savedEditorFile;
-            updateTitle();
-        }
+
+        editorFile = Optional.ofNullable(savedInstanceState.getParcelable(KEY_EDITOR_FILE));
+        updateTitle();
+
         final Parcelable historyState = savedInstanceState.getParcelable(KEY_HISTORY_STATE);
         if (historyState != null && editorHistory != null) {
             editorHistory.restoreInstance(historyState);
@@ -414,7 +412,7 @@ public final class EditorActivity extends Activity implements
     }
 
     private void setContent(@NonNull EditorFile editorFile, @NonNull String content) {
-        this.editorFile = editorFile;
+        this.editorFile = Optional.of(editorFile);
 
         updateTitle();
 
@@ -454,17 +452,17 @@ public final class EditorActivity extends Activity implements
 
     private void saveContents(boolean quitWhenSaved) {
         if (dirty || alwaysAllowSave) {
-            if (editorFile == null) {
-                openFileSaver(quitWhenSaved);
+            if (editorFile.isPresent()) {
+                writeContents(editorFile.get(), quitWhenSaved);
             } else {
-                writeContents(editorFile, quitWhenSaved);
+                openFileSaver(quitWhenSaved);
             }
         }
     }
 
     private void saveNewFile(@NonNull EditorFile editorFile,
                              boolean quitWhenSaved) {
-        this.editorFile = editorFile;
+        this.editorFile = Optional.of(editorFile);
         if (!quitWhenSaved) {
             updateTitle();
 
@@ -509,11 +507,11 @@ public final class EditorActivity extends Activity implements
     }
 
     private void updateTitle() {
-        if (editorFile != null) {
-            final String title = editorFile.getName();
+        editorFile.ifPresent(x -> {
+            final String title = x.getName();
             actionBar.setTitle(title);
             setTaskDescription(new ActivityManager.TaskDescription(title));
-        }
+        });
     }
 
     private void updateSummary(int cursorStart, int cursorEnd) {
@@ -692,9 +690,8 @@ public final class EditorActivity extends Activity implements
     }
 
     private void showQuitMessage() {
-        final String fileName = editorFile == null
-                ? getString(R.string.title_generic)
-                : '"' + editorFile.getName() + '"';
+        final String fileName = editorFile.map(x -> '"' + x.getName() + '"')
+                .orElseGet(() -> getString(R.string.title_generic));
 
         new AlertDialog.Builder(this, R.style.DialogTheme)
                 .setTitle(fileName)
