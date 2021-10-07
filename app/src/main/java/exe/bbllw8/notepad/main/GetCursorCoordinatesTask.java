@@ -25,18 +25,22 @@ public final class GetCursorCoordinatesTask implements Callable<Point> {
     @NonNull
     @Override
     public Point call() {
-        int column = 1;
-        int row = 1;
-        int i = 0;
-        while (i < cursorPosition) {
-            if (text.charAt(i++) == '\n') {
-                column = 1;
-                row++;
-            } else {
-                column++;
+        if (text.isEmpty()) {
+            return new Point(1, 1);
+        } else {
+            int column = 1;
+            int row = 1;
+            int i = 0;
+            while (i < cursorPosition) {
+                if (text.charAt(i++) == '\n') {
+                    column = 1;
+                    row++;
+                } else {
+                    column++;
+                }
             }
-        }
 
-        return new Point(column, row);
+            return new Point(column, row);
+        }
     }
 }

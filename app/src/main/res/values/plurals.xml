@@ -1,0 +1,10 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<resources>
+    <plurals name="summary_selection_info">
+        <item quantity="one">Selected 1 char, Ln %1$d, Col %2$d</item>
+        <item quantity="other">Selected %3$d chars, Ln %1$d, Col %2$d</item>
+    </plurals>
+</resources>

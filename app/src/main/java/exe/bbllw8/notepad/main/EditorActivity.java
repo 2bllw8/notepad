@@ -115,7 +115,7 @@ public final class EditorActivity extends Activity implements
         commandField = findViewById(R.id.editorCommandField);
         final ImageView commandRunButton = findViewById(R.id.editorCommandRun);
 
-        summaryView.setText(getString(R.string.summary_info, 1, 1));
+        setCursorCoordinatesSummary(1, 1);
         textEditorView.setOnCursorChanged(this::setCursorCoordinatesSummary);
         commandField.setOnKeyListener((v, code, ev) -> {
             if (code == KeyEvent.KEYCODE_ENTER) {
@@ -517,14 +517,17 @@ public final class EditorActivity extends Activity implements
     }
 
     private void setCursorCoordinatesSummary(int cursorStart, int cursorEnd) {
+        final int numChars = cursorEnd - cursorStart;
+        final String summaryTemplate = numChars == 0
+                ? getString(R.string.summary_info)
+                : getResources().getQuantityString(R.plurals.summary_selection_info, numChars);
         final String content = textEditorView.getText().toString();
         taskExecutor.runTask(new GetCursorCoordinatesTask(content, cursorStart),
                 point -> {
-                    final String summary = cursorStart == cursorEnd
-                            ? getString(R.string.summary_info,
-                            point.y, point.x)
-                            : getString(R.string.summary_select,
-                            cursorEnd - cursorStart, point.y, point.x);
+                    final String summary = String.format(summaryTemplate,
+                            point.y,
+                            point.x,
+                            numChars);
                     summaryView.post(() -> summaryView.setText(summary));
                 });
     }

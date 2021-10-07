@@ -22,7 +22,6 @@
 
     <string name="summary_loading">Loading…</string>
     <string name="summary_info">Ln %1$d, Col %2$d</string>
-    <string name="summary_select">Selected %1$d chars, Ln %2$d, Col %3$d</string>
 
     <string name="title_generic">this text file</string>
 
