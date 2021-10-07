@@ -7,7 +7,6 @@ package exe.bbllw8.notepad.commands.task;
 import androidx.annotation.NonNull;
 
 import java.util.concurrent.Callable;
-import java.util.regex.Pattern;
 
 public final class DeleteFirstCommandTask implements Callable<String> {
     @NonNull
