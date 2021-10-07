@@ -11,7 +11,8 @@
         android:allowClearUserData="false"
         android:appCategory="productivity"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/label_app">
+        android:label="@string/label_app"
+        android:supportsRtl="true">
 
         <!-- Help -->
 
