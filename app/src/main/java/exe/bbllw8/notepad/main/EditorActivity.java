@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
 
 import java.lang.ref.Reference;
@@ -104,6 +105,7 @@ public final class EditorActivity extends Activity implements
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Initialize view
         setContentView(R.layout.activity_main);
         actionBar = getActionBar();
         loadView = findViewById(R.id.editorProgress);
@@ -113,13 +115,8 @@ public final class EditorActivity extends Activity implements
         commandField = findViewById(R.id.editorCommandField);
         final ImageView commandRunButton = findViewById(R.id.editorCommandRun);
 
-        editorConfig = new EditorConfig(this, this);
-        editorHistory = new EditorHistory(textEditorView::getEditableText,
-                getResources().getInteger(R.integer.config_history_buffer_size));
-        autoPair = new AutoPair(textEditorView::getEditableText);
-
         summaryView.setText(getString(R.string.summary_info, 1, 1));
-        textEditorView.setOnCursorChanged(this::updateSummary);
+        textEditorView.setOnCursorChanged(this::setCursorCoordinatesSummary);
         commandField.setOnKeyListener((v, code, ev) -> {
             if (code == KeyEvent.KEYCODE_ENTER) {
                 runCurrentCommand();
@@ -137,23 +134,33 @@ public final class EditorActivity extends Activity implements
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        // Initialize features
+        editorHistory = new EditorHistory(textEditorView::getEditableText,
+                getResources().getInteger(R.integer.config_history_buffer_size));
+        autoPair = new AutoPair(textEditorView::getEditableText);
+        editorConfig = new EditorConfig(this, this);
+        loadConfig();
+
+        // Load content
         final Intent intent = getIntent();
         if (savedInstanceState == null) {
             if (Intent.ACTION_PROCESS_TEXT.equals(intent.getAction())) {
-                final String textInput = intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT);
-                setTextContent(textInput);
+                // Save snippet feature
+                alwaysAllowSave = true;
+                setContentInView(intent.getStringExtra(Intent.EXTRA_PROCESS_TEXT));
             } else {
                 final Uri inputUri = intent.getData();
                 if (inputUri == null) {
+                    // Empty content
                     registerTextListeners();
-                    loadConfig();
                 } else {
+                    // Load a file
                     loadFile(inputUri);
                 }
             }
         } else {
+            // Restoring instance, only register the listeners
             registerTextListeners();
-            loadConfig();
         }
     }
 
@@ -179,7 +186,7 @@ public final class EditorActivity extends Activity implements
         super.onRestoreInstanceState(savedInstanceState);
 
         editorFile = Optional.ofNullable(savedInstanceState.getParcelable(KEY_EDITOR_FILE));
-        updateTitle();
+        editorFile.ifPresent(x -> setDocumentTitle(x.getName()));
 
         final Parcelable historyState = savedInstanceState.getParcelable(KEY_HISTORY_STATE);
         if (historyState != null && editorHistory != null) {
@@ -405,49 +412,44 @@ public final class EditorActivity extends Activity implements
 
     /* Content operations */
 
-    private void setTextContent(@NonNull String content) {
-        loadConfig();
-        setContentInView(content);
-        alwaysAllowSave = true;
-    }
-
     private void setContent(@NonNull EditorFile editorFile, @NonNull String content) {
         this.editorFile = Optional.of(editorFile);
-
-        updateTitle();
-
         loadView.setVisibility(View.GONE);
         textEditorView.setVisibility(View.VISIBLE);
 
         loadConfig();
+        setDocumentTitle(editorFile.getName());
         setContentInView(content);
     }
 
     private void setContentInView(@NonNull String content) {
         if (Build.VERSION.SDK_INT >= 28) {
-            final PrecomputedText.Params params = textEditorView.getTextMetricsParams();
-            final Reference<TextEditorView> editorViewRef = new WeakReference<>(textEditorView);
-            taskExecutor.submit(() -> {
-                final TextEditorView ev = editorViewRef.get();
-                if (ev == null) {
-                    return;
-                }
-                final PrecomputedText preCompText = PrecomputedText.create(content, params);
-                ev.post(() -> {
-                    final TextEditorView ev2 = editorViewRef.get();
-                    if (ev2 == null) {
-                        return;
-                    }
-                    ev2.setText(preCompText);
-
-                    // Set listener after the contents
-                    registerTextListeners();
-                });
-            });
+            setContentInViewAsync(content);
         } else {
             textEditorView.setText(content);
             registerTextListeners();
         }
+    }
+
+    @RequiresApi(28)
+    private void setContentInViewAsync(@NonNull String content) {
+        final PrecomputedText.Params params = textEditorView.getTextMetricsParams();
+        final Reference<TextEditorView> editorViewRef = new WeakReference<>(textEditorView);
+
+        taskExecutor.submit(() -> {
+            final TextEditorView ev = editorViewRef.get();
+            if (ev != null) {
+                final PrecomputedText preCompText = PrecomputedText.create(content, params);
+                ev.post(() -> {
+                    final TextEditorView ev2 = editorViewRef.get();
+                    if (ev2 != null) {
+                        ev2.setText(preCompText);
+                        // Set listener after the contents
+                        registerTextListeners();
+                    }
+                });
+            }
+        });
     }
 
     private void saveContents(boolean quitWhenSaved) {
@@ -464,22 +466,22 @@ public final class EditorActivity extends Activity implements
                              boolean quitWhenSaved) {
         this.editorFile = Optional.of(editorFile);
         if (!quitWhenSaved) {
-            updateTitle();
-
             // We don't need save to be forcefully enabled anymore
             alwaysAllowSave = false;
             editorMenu.ifPresent(x -> x.setSaveAllowed(false));
         }
+        setDocumentTitle(editorFile.getName());
         writeContents(editorFile, quitWhenSaved);
     }
 
     private void writeContents(@NonNull EditorFile editorFile,
                                boolean quitWhenSaved) {
-        final AlertDialog savingDialog = new AlertDialog.Builder(this)
-                .setCancelable(false)
-                .setTitle(R.string.action_save)
-                .setMessage(getString(R.string.save_in_progress, editorFile.getName()))
-                .show();
+        final WeakReference<AlertDialog> savingDialogRef = new WeakReference<>(
+                new AlertDialog.Builder(this)
+                        .setCancelable(false)
+                        .setTitle(R.string.action_save)
+                        .setMessage(getString(R.string.save_in_progress, editorFile.getName()))
+                        .show());
 
         final String contents = textEditorView.getText().toString();
         taskExecutor.runTask(new EditorFileWriterTask(getContentResolver(), editorFile, contents),
@@ -487,7 +489,10 @@ public final class EditorActivity extends Activity implements
                     if (success) {
                         // Change only the variable, still allow undo
                         dirty = false;
-                        savingDialog.dismiss();
+                        final AlertDialog savingDialog = savingDialogRef.get();
+                        if (savingDialog != null && savingDialog.isShowing()) {
+                            savingDialog.dismiss();
+                        }
                         showSavedMessage(quitWhenSaved);
                     } else {
                         showWriteErrorMessage(editorFile);
@@ -506,15 +511,12 @@ public final class EditorActivity extends Activity implements
         });
     }
 
-    private void updateTitle() {
-        editorFile.ifPresent(x -> {
-            final String title = x.getName();
-            actionBar.setTitle(title);
-            setTaskDescription(new ActivityManager.TaskDescription(title));
-        });
+    private void setDocumentTitle(String title) {
+        actionBar.setTitle(title);
+        setTaskDescription(new ActivityManager.TaskDescription(title));
     }
 
-    private void updateSummary(int cursorStart, int cursorEnd) {
+    private void setCursorCoordinatesSummary(int cursorStart, int cursorEnd) {
         final String content = textEditorView.getText().toString();
         taskExecutor.runTask(new GetCursorCoordinatesTask(content, cursorStart),
                 point -> {
@@ -534,7 +536,6 @@ public final class EditorActivity extends Activity implements
         onTextStyleChanged(editorConfig.getTextStyle());
         onAutoPairEnabledChanged(editorConfig.getAutoPairEnabled());
         onShowCommandBarChanged(editorConfig.getShowCommandBar());
-        editorConfig.setReady();
     }
 
     @Override
@@ -591,13 +592,12 @@ public final class EditorActivity extends Activity implements
     /* Commands */
 
     private void runCurrentCommand() {
-        final String input = commandField.getText().toString();
-        final boolean success = editorCommandParser.parse(input)
-                .map(this::runCommand)
-                .orElse(false);
-        if (!success) {
-            showTmpMessage(R.string.command_unknown);
-        }
+        editorCommandParser.parse(commandField.getText().toString())
+                .ifPresent(x -> {
+                    if (!runCommand(x)) {
+                        showTmpMessage(R.string.command_unknown);
+                    }
+                });
     }
 
     @Override

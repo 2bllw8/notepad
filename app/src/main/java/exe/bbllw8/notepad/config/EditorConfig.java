@@ -35,22 +35,16 @@ public final class EditorConfig {
     private static final String CMD_VAL_STYLE_SANS = "sans";
     private static final String CMD_VAL_STYlE_SERIF = "serif";
 
-    @Nullable
+    @NonNull
     private final EditorConfigListener configListener;
 
     @NonNull
     private final SharedPreferences preferences;
-    private boolean ready;
 
     public EditorConfig(@NonNull Context context,
-                        @Nullable EditorConfigListener listener) {
+                        @NonNull EditorConfigListener listener) {
         this.configListener = listener;
         this.preferences = context.getSharedPreferences(CONFIG_PREFERENCES, Context.MODE_PRIVATE);
-        this.ready = false;
-    }
-
-    public void setReady() {
-        ready = true;
     }
 
     @Config.Size
@@ -62,9 +56,7 @@ public final class EditorConfig {
         preferences.edit()
                 .putInt(KEY_SIZE, size)
                 .apply();
-        if (configListener != null && ready) {
-            configListener.onTextSizeChanged(size);
-        }
+        configListener.onTextSizeChanged(size);
     }
 
     @Config.Style
@@ -76,9 +68,7 @@ public final class EditorConfig {
         preferences.edit()
                 .putInt(KEY_STYLE, style)
                 .apply();
-        if (configListener != null && ready) {
-            configListener.onTextStyleChanged(style);
-        }
+        configListener.onTextStyleChanged(style);
     }
 
     public boolean getAutoPairEnabled() {
@@ -89,9 +79,7 @@ public final class EditorConfig {
         preferences.edit()
                 .putBoolean(KEY_AUTO_PAIR, enabled)
                 .apply();
-        if (configListener != null && ready) {
-            configListener.onAutoPairEnabledChanged(enabled);
-        }
+        configListener.onAutoPairEnabledChanged(enabled);
     }
 
     public boolean getShowCommandBar() {
@@ -102,9 +90,7 @@ public final class EditorConfig {
         preferences.edit()
                 .putBoolean(KEY_SHOW_COMMAND_BAR, show)
                 .apply();
-        if (configListener != null && ready) {
-            configListener.onShowCommandBarChanged(show);
-        }
+        configListener.onShowCommandBarChanged(show);
     }
 
     public void increaseTextSize() {
