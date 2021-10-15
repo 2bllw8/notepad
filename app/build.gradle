@@ -6,8 +6,46 @@ plugins {
     id 'com.android.application'
 }
 
+def basePkg = 'exe/bbllw8/notepad'
+def appSrcDirs = [
+        "$basePkg/auto",
+        "$basePkg/commands",
+        "$basePkg/config",
+        "$basePkg/help",
+        "$basePkg/history",
+        "$basePkg/io",
+        "$basePkg/main",
+        "$basePkg/markdown",
+        "$basePkg/shell",
+        "$basePkg/task",
+]
+
 android {
     compileSdkVersion rootProject.ext.targetSdkVersion
+
+    sourceSets {
+        main {
+            manifest {
+                srcFile "java/$basePkg/AndroidManifest.xml"
+            }
+            java {
+                srcDir 'java'
+                includes = appSrcDirs.collect { "$it/**/*.java" }
+                excludes = [
+                        '**/build/**',
+                ]
+            }
+            res {
+                srcDirs = []
+                appSrcDirs.forEach { srcDirs += "java/$it/res" }
+            }
+        }
+        test {
+            java {
+                srcDir 'javatests'
+            }
+        }
+    }
 
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion

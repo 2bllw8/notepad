@@ -3,10 +3,6 @@
   ~ SPDX-License-Identifier: GPL-3.0-only
   -->
 <resources>
-    <string name="label_app">Notepad</string>
-    <string name="label_snippet">Save as file</string>
-    <string name="label_help">Help</string>
-
     <string name="action_run">Run</string>
     <string name="action_quit">Quit</string>
     <string name="action_save">Save</string>
@@ -47,10 +43,4 @@
     <string name="save_in_progress">Saving \'%1$s\'…</string>
     <string name="save_success">Saved</string>
     <string name="save_failed">Failed to save \'%1$s\'</string>
-
-    <string name="shortcut_open_short">Open file</string>
-    <string name="shortcut_open_long">Open a file</string>
-    <string name="shortcut_open_disabled">Can\'t create open files</string>
-
-    <string name="help_error">Could not load help text</string>
 </resources>

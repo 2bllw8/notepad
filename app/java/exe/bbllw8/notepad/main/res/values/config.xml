@@ -7,6 +7,4 @@
     <integer name="config_max_file_size">8388608</integer>
     <!-- History buffer size -->
     <integer name="config_history_buffer_size">128</integer>
-    <!-- Enable the shell by default -->
-    <bool name="config_shell_enabled_default">true</bool>
 </resources>

@@ -1,0 +1,12 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<resources>
+    <string name="label_app">Notepad</string>
+    <string name="label_snippet">Save as file</string>
+
+    <string name="shortcut_open_short">Open file</string>
+    <string name="shortcut_open_long">Open a file</string>
+    <string name="shortcut_open_disabled">Can\'t create open files</string>
+</resources>

@@ -1,0 +1,8 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<resources>
+    <!-- Enable the shell by default -->
+    <bool name="config_shell_enabled_default">true</bool>
+</resources>

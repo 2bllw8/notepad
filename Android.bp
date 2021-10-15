@@ -3,13 +3,25 @@
 
 android_app {
     name: "notepad",
-    manifest: "app/src/main/AndroidManifest.xml",
+    manifest: "app/java/exe/bbllw8/notepad/AndroidManifest.xml",
     sdk_version: "current",
     srcs: [
-        "app/src/main/java/exe/bbllw8/notepad/**/*.java",
+        "app/java/exe/bbllw8/notepad/auto/**/*.java",
+        "app/java/exe/bbllw8/notepad/commands/**/*.java",
+        "app/java/exe/bbllw8/notepad/config/**/*.java",
+        "app/java/exe/bbllw8/notepad/help/**/*.java",
+        "app/java/exe/bbllw8/notepad/history/**/*.java",
+        "app/java/exe/bbllw8/notepad/io/**/*.java",
+        "app/java/exe/bbllw8/notepad/main/**/*.java",
+        "app/java/exe/bbllw8/notepad/markdown/**/*.java",
+        "app/java/exe/bbllw8/notepad/shell/**/*.java",
+        "app/java/exe/bbllw8/notepad/task/**/*.java",
     ],
     resource_dirs: [
-        "app/src/main/res",
+        "app/java/exe/bbllw8/notepad/help/res",
+        "app/java/exe/bbllw8/notepad/main/res",
+        "app/java/exe/bbllw8/notepad/markdown/res",
+        "app/java/exe/bbllw8/notepad/shell/res",
     ],
     optimize: {
         proguard_flags_files: [

@@ -6,7 +6,4 @@
     <color name="launcher_background">#525C7E</color>
     <color name="launcher_foreground">#F9EBF0</color>
     <color name="shortcut_foreground">#525C7E</color>
-
-    <color name="markdown_code">#328C8C8C</color>
-    <color name="markdown_quote">#839145</color>
 </resources>

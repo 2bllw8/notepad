@@ -1,0 +1,8 @@
+<!--
+  ~ Copyright (c) 2021 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<resources>
+    <string name="label_help">Help</string>
+    <string name="help_error">Could not load help text</string>
+</resources>
