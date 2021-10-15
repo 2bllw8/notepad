@@ -37,6 +37,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
 
+import java.io.IOException;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.Optional;
@@ -59,6 +60,7 @@ import exe.bbllw8.notepad.history.EditorHistory;
 import exe.bbllw8.notepad.io.EditorFile;
 import exe.bbllw8.notepad.io.EditorFileLoaderTask;
 import exe.bbllw8.notepad.io.EditorFileReaderTask;
+import exe.bbllw8.notepad.io.EditorFileTooLargeException;
 import exe.bbllw8.notepad.io.EditorFileWriterTask;
 import exe.bbllw8.notepad.main.menu.EditorMenu;
 import exe.bbllw8.notepad.main.menu.EditorMenuActions;
@@ -77,6 +79,7 @@ public final class EditorActivity extends Activity implements
     private static final String TYPE_PLAIN_TEXT = "text/plain";
     private static final int REQUEST_CREATE_FILE_AND_QUIT = 10;
     private static final int REQUEST_CREATE_FILE = 11;
+    private static final float ONE_MB = 1048576f;
 
     private boolean dirty = false;
     private boolean alwaysAllowSave = false;
@@ -380,7 +383,7 @@ public final class EditorActivity extends Activity implements
         final int maxSize = getResources().getInteger(R.integer.config_max_file_size);
         taskExecutor.runTask(new EditorFileReaderTask(getContentResolver(), editorFile, maxSize),
                 result -> result.forEach(
-                        e -> showReadErrorMessage(editorFile),
+                        e -> showReadErrorMessage(editorFile, e),
                         content -> setContent(editorFile, content)));
     }
 
@@ -715,8 +718,15 @@ public final class EditorActivity extends Activity implements
         showFatalErrorMessage(getString(R.string.error_open));
     }
 
-    private void showReadErrorMessage(@NonNull EditorFile editorFile) {
-        showFatalErrorMessage(getString(R.string.error_read, editorFile.getName()));
+    private void showReadErrorMessage(@NonNull EditorFile editorFile,
+                                      @NonNull IOException exception) {
+        if (exception instanceof EditorFileTooLargeException) {
+            final EditorFileTooLargeException ftl = (EditorFileTooLargeException) exception;
+            showFatalErrorMessage(getString(R.string.error_read_size, editorFile.getName(),
+                    ftl.getFileSize() / ONE_MB, ftl.getMaxSize() / ONE_MB));
+        } else {
+            showFatalErrorMessage(getString(R.string.error_read_generic, editorFile.getName()));
+        }
     }
 
     private void showWriteErrorMessage(@NonNull EditorFile editorFile) {

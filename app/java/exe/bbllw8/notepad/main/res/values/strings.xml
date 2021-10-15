@@ -11,7 +11,8 @@
 
     <string name="error_title">Error</string>
     <string name="error_open">Failed to open file</string>
-    <string name="error_read">Failed to read \'%1$s\'</string>
+    <string name="error_read_generic">Failed to read \'%1$s\'</string>
+    <string name="error_read_size">Failed to read \'%1$s\': the file is too big (%2$.2f / %3$.2f MB)</string>
 
     <string name="summary_loading">Loading…</string>
     <string name="summary_info">Ln %1$d, Col %2$d</string>
