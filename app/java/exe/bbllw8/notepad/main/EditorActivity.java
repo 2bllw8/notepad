@@ -379,12 +379,9 @@ public final class EditorActivity extends Activity implements
     private void readFile(@NonNull EditorFile editorFile) {
         final int maxSize = getResources().getInteger(R.integer.config_max_file_size);
         taskExecutor.runTask(new EditorFileReaderTask(getContentResolver(), editorFile, maxSize),
-                result -> result.left()
-                        .map(e -> {
-                            showReadErrorMessage(editorFile);
-                            return false;
-                        })
-                        .forEach(content -> setContent(editorFile, content)));
+                result -> result.forEach(
+                        e -> showReadErrorMessage(editorFile),
+                        content -> setContent(editorFile, content)));
     }
 
     private void loadNewSaveFile(@NonNull Uri uri,

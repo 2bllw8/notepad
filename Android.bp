@@ -36,6 +36,6 @@ android_app {
 
 java_import {
     name: "notepad-lib-either",
-    jars: ["libs/either-2.0.0.jar"],
+    jars: ["libs/either-2.1.0.jar"],
     sdk_version: "current",
 }
