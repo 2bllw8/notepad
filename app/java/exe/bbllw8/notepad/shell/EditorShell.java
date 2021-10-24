@@ -19,7 +19,7 @@ public final class EditorShell {
         final PackageManager packageManager = context.getPackageManager();
         final int status = packageManager.getComponentEnabledSetting(
                 new ComponentName(context, EditorShell.class));
-        return PackageManager.COMPONENT_ENABLED_STATE_ENABLED == status;
+        return PackageManager.COMPONENT_ENABLED_STATE_DISABLED > status;
     }
 
     public static void setEnabled(@NonNull Context context, boolean enabled) {

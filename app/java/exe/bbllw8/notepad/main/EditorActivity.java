@@ -208,7 +208,7 @@ public final class EditorActivity extends Activity implements
         if (menuInflater == null) {
             return super.onCreateOptionsMenu(menu);
         } else {
-            this.editorMenu = Optional.of(new EditorMenu(this, menu, menuInflater))
+            editorMenu = Optional.of(new EditorMenu(this, menu, menuInflater))
                     .map(x -> {
                         // Load settings
                         x.onFontSizeChanged(editorConfig.getTextSize());
@@ -366,6 +366,7 @@ public final class EditorActivity extends Activity implements
     @Override
     public void setShellShown(boolean shown) {
         EditorShell.setEnabled(this, shown);
+        editorMenu.ifPresent(x -> x.onShellVisibilityChanged(shown));
     }
 
     /* File loading */
