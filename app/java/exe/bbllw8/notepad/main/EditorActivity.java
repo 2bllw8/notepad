@@ -638,11 +638,9 @@ public final class EditorActivity extends Activity implements
     @Override
     public void runSetCommand(@NonNull EditorCommand.Set command) {
         final boolean success = editorConfig.setByKeyVal(command.getKey(), command.getValue());
-        if (success) {
-            showTmpMessage(R.string.command_set_success);
-        } else {
-            showTmpMessage(R.string.command_unknown);
-        }
+        showTmpMessage(success
+                ? R.string.command_set_success
+                : R.string.command_unknown);
     }
 
     @Override
