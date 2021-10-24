@@ -3,6 +3,9 @@
   ~ SPDX-License-Identifier: GPL-3.0-only
   -->
 <resources>
+    <color name="shell_primary">?android:attr/colorPrimary</color>
+    <color name="shell_primary_dark">?android:attr/colorPrimaryDark</color>
+    <color name="shell_accent">@color/launcher_background</color>
     <color name="launcher_background">#525C7E</color>
     <color name="launcher_foreground">#F9EBF0</color>
     <color name="shortcut_foreground">#525C7E</color>

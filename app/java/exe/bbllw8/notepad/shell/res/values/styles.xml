@@ -5,7 +5,9 @@
 <resources>
 
     <style name="AppTheme" parent="android:Theme.DeviceDefault.Light">
-        <item name="android:colorAccent">@color/launcher_background</item>
+        <item name="android:colorPrimary">@color/shell_primary</item>
+        <item name="android:colorPrimaryDark">@color/shell_primary_dark</item>
+        <item name="android:colorAccent">@color/shell_accent</item>
         <item name="android:navigationBarColor">?android:colorPrimary</item>
         <item name="android:statusBarColor">?android:colorPrimary</item>
         <item name="android:windowLightStatusBar">true</item>
@@ -13,7 +15,9 @@
     </style>
 
     <style name="DialogTheme" parent="android:Theme.DeviceDefault.Light.Dialog.NoActionBar.MinWidth">
-        <item name="android:colorAccent">@color/launcher_background</item>
+        <item name="android:colorPrimary">@color/shell_primary</item>
+        <item name="android:colorPrimaryDark">@color/shell_primary_dark</item>
+        <item name="android:colorAccent">@color/shell_accent</item>
         <item name="android:background">@null</item>
     </style>
 </resources>
