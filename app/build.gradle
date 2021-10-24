@@ -96,6 +96,6 @@ android {
 }
 
 dependencies {
-    implementation rootProject.ext.libAndroidxAnnotation
-    implementation rootProject.ext.libEither
+    implementation rootProject.ext.lib['androidx']['annotation']
+    implementation rootProject.ext.lib['either']
 }
