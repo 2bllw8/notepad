@@ -10,19 +10,25 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import exe.bbllw8.notepad.config.Config;
+
 public final class EditorFile implements Parcelable {
     @NonNull
     private final Uri uri;
     @NonNull
     private final String name;
     private final long size;
+    @Config.Eol
+    private final String eol;
 
     public EditorFile(@NonNull Uri uri,
                       @NonNull String name,
-                      long size) {
+                      long size,
+                      @Config.Eol String eol) {
         this.uri = uri;
         this.name = name;
         this.size = size;
+        this.eol = eol;
     }
 
     @NonNull
@@ -39,12 +45,18 @@ public final class EditorFile implements Parcelable {
         return size;
     }
 
+    @Config.Eol
+    public String getEol() {
+        return eol;
+    }
+
     // Parcelable
 
     protected EditorFile(@NonNull Parcel in) {
         uri = in.readParcelable(Uri.class.getClassLoader());
         name = in.readString();
         size = in.readLong();
+        eol = in.readString();
     }
 
     @Override
@@ -57,6 +69,7 @@ public final class EditorFile implements Parcelable {
         dest.writeParcelable(uri, flags);
         dest.writeString(name);
         dest.writeLong(size);
+        dest.writeString(eol);
     }
 
     public static final Creator<EditorFile> CREATOR = new Creator<>() {

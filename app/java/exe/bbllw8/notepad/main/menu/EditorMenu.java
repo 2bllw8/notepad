@@ -38,6 +38,13 @@ public final class EditorMenu {
     private final MenuItem styleSerifMenuItem;
 
     @NonNull
+    private final MenuItem eolCrMenuItem;
+    @NonNull
+    private final MenuItem eolCrLfMenuItem;
+    @NonNull
+    private final MenuItem eolLfMenuItem;
+
+    @NonNull
     private final MenuItem autoPairMenuItem;
     @NonNull
     private final MenuItem showCommandBarMenuItem;
@@ -60,6 +67,10 @@ public final class EditorMenu {
         styleMonoMenuItem = menu.findItem(R.id.menu_font_style_mono);
         styleSansMenuItem = menu.findItem(R.id.menu_font_style_sans);
         styleSerifMenuItem = menu.findItem(R.id.menu_font_style_serif);
+
+        eolCrMenuItem = menu.findItem(R.id.menu_eol_cr);
+        eolCrLfMenuItem = menu.findItem(R.id.menu_eol_crlf);
+        eolLfMenuItem = menu.findItem(R.id.menu_eol_lf);
 
         autoPairMenuItem = menu.findItem(R.id.menu_option_auto_pair);
         showCommandBarMenuItem = menu.findItem(R.id.menu_option_command_bar_show);
@@ -102,6 +113,15 @@ public final class EditorMenu {
             return true;
         } else if (id == R.id.menu_font_style_serif) {
             actions.setFontStyle(Config.Style.SERIF);
+            return true;
+        } else if (id == R.id.menu_eol_cr) {
+            actions.setEol(Config.Eol.CR);
+            return true;
+        } else if (id == R.id.menu_eol_crlf) {
+            actions.setEol(Config.Eol.CRLF);
+            return true;
+        } else if (id == R.id.menu_eol_lf) {
+            actions.setEol(Config.Eol.LF);
             return true;
         } else if (id == R.id.menu_option_auto_pair) {
             actions.setAutoPairEnabled(!isChecked);
@@ -155,6 +175,20 @@ public final class EditorMenu {
 
     public void onShellVisibilityChanged(boolean isVisible) {
         showShellMenuItem.setChecked(isVisible);
+    }
+
+    public void onEolChanged(@NonNull @Config.Eol String eol) {
+        switch (eol) {
+            case Config.Eol.CR:
+                eolCrMenuItem.setChecked(true);
+                break;
+            case Config.Eol.CRLF:
+                eolCrLfMenuItem.setChecked(true);
+                break;
+            case Config.Eol.LF:
+                eolLfMenuItem.setChecked(true);
+                break;
+        }
     }
 
     public void setUndoAllowed(boolean allowed) {

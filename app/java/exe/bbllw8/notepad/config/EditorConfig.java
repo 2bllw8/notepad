@@ -23,6 +23,7 @@ public final class EditorConfig {
     private static final String CMD_KEY_SHOW_CMD_BAR = "commands";
     private static final String CMD_KEY_TEXT_SIZE = "size";
     private static final String CMD_KEY_TEXT_STYLE = "style";
+    private static final String CMD_KEY_EOL = "eol";
 
     private static final String CMD_VAL_DEFAULT = "default";
     private static final String CMD_VAL_OFF = "off";
@@ -33,6 +34,9 @@ public final class EditorConfig {
     private static final String CMD_VAL_STYLE_MONO = "mono";
     private static final String CMD_VAL_STYLE_SANS = "sans";
     private static final String CMD_VAL_STYlE_SERIF = "serif";
+    private static final String CMD_VAL_EOL_CR = "cr";
+    private static final String CMD_VAL_EOL_CRLF = "crlf";
+    private static final String CMD_VAL_EOL_LF = "lf";
 
     @NonNull
     private final EditorConfigListener configListener;
@@ -40,10 +44,17 @@ public final class EditorConfig {
     @NonNull
     private final SharedPreferences preferences;
 
+    // Runtime configs
+
+    @Config.Eol
+    @NonNull
+    private String eol;
+
     public EditorConfig(@NonNull Context context,
                         @NonNull EditorConfigListener listener) {
         this.configListener = listener;
         this.preferences = context.getSharedPreferences(CONFIG_PREFERENCES, Context.MODE_PRIVATE);
+        this.eol = System.lineSeparator();
     }
 
     @Config.Size
@@ -92,6 +103,17 @@ public final class EditorConfig {
         configListener.onShowCommandBarChanged(show);
     }
 
+    @Config.Eol
+    @NonNull
+    public String getEol() {
+        return eol;
+    }
+
+    public void setEol(@Config.Eol @NonNull String eol) {
+        this.eol = eol;
+        configListener.onEolChanged(eol);
+    }
+
     public void increaseTextSize() {
         final int current = getTextSize();
         switch (current) {
@@ -135,6 +157,8 @@ public final class EditorConfig {
                 return applyTextSizeCommand(value);
             case CMD_KEY_TEXT_STYLE:
                 return applyTextStyleCommand(value);
+            case CMD_KEY_EOL:
+                return applyEolCommand(value);
             default:
                 return false;
         }
@@ -190,6 +214,22 @@ public final class EditorConfig {
                 return true;
             case CMD_VAL_STYlE_SERIF:
                 setTextStyle(Config.Style.SERIF);
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private boolean applyEolCommand(@NonNull String value) {
+        switch (value) {
+            case CMD_VAL_EOL_CR:
+                setEol(Config.Eol.CR);
+                return true;
+            case CMD_VAL_EOL_LF:
+                setEol(Config.Eol.LF);
+                return true;
+            case CMD_VAL_EOL_CRLF:
+                setEol(Config.Eol.CRLF);
                 return true;
             default:
                 return false;

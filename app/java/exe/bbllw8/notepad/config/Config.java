@@ -5,6 +5,7 @@
 package exe.bbllw8.notepad.config;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.StringDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -36,6 +37,18 @@ public final class Config {
         int MONO = 0;
         int SANS = 1;
         int SERIF = 2;
+    }
+
+    @StringDef(value = {
+            Eol.CR,
+            Eol.LF,
+            Eol.CRLF,
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Eol {
+        String CR = "\r";
+        String CRLF = "\r\n";
+        String LF = "\n";
     }
 
     public static final int DEFAULT_SIZE = Size.MEDIUM;

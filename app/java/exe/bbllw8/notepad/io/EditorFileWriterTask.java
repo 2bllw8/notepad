@@ -36,7 +36,8 @@ public final class EditorFileWriterTask implements Callable<Boolean> {
     @Override
     public Boolean call() {
         try (final OutputStream outputStream = cr.openOutputStream(editorFile.getUri())) {
-            try (final InputStream inputStream = new ByteArrayInputStream(content.getBytes())) {
+            final String text = content.replaceAll("\n", editorFile.getEol());
+            try (final InputStream inputStream = new ByteArrayInputStream(text.getBytes())) {
                 final byte[] buffer = new byte[4096];
                 int read = inputStream.read(buffer, 0, 4096);
                 while (read > 0) {

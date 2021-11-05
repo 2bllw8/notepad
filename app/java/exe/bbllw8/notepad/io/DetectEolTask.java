@@ -1,0 +1,39 @@
+/*
+ * Copyright (c) 2021 2bllw8
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+package exe.bbllw8.notepad.io;
+
+import androidx.annotation.NonNull;
+
+import java.util.concurrent.Callable;
+
+import exe.bbllw8.notepad.config.Config;
+
+public final class DetectEolTask implements Callable<String> {
+    @NonNull
+    private final String content;
+
+    public DetectEolTask(@NonNull String content) {
+        this.content = content;
+    }
+
+    @NonNull
+    @Override
+    public String call() throws Exception {
+        int i = 0;
+        final int n = content.length();
+        while (i < n) {
+            final char c = content.charAt(i++);
+            if (c == '\r') {
+                return i < n && content.charAt(i) == '\n'
+                        ? Config.Eol.CRLF
+                        : Config.Eol.CR;
+            } else if (c == '\n') {
+                return Config.Eol.LF;
+            }
+        }
+        // Assume default
+        return System.lineSeparator();
+    }
+}

@@ -13,4 +13,6 @@ public interface EditorConfigListener {
     void onAutoPairEnabledChanged(boolean enabled);
 
     void onShowCommandBarChanged(boolean show);
+
+    void onEolChanged(@Config.Eol String newEol);
 }

@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
+import exe.bbllw8.notepad.config.Config;
+
 public final class EditorFileLoaderTask implements Callable<Optional<EditorFile>> {
     private static final String[] FILE_INFO_QUERY = {
             OpenableColumns.DISPLAY_NAME,
@@ -24,11 +26,20 @@ public final class EditorFileLoaderTask implements Callable<Optional<EditorFile>
     private final ContentResolver cr;
     @NonNull
     private final Uri uri;
+    @NonNull
+    private final String eol;
 
     public EditorFileLoaderTask(@NonNull ContentResolver cr,
                                 @NonNull Uri uri) {
+        this(cr, uri, System.lineSeparator());
+    }
+
+    public EditorFileLoaderTask(@NonNull ContentResolver cr,
+                                @NonNull Uri uri,
+                                @NonNull String eol) {
         this.cr = cr;
         this.uri = uri;
+        this.eol = eol;
     }
 
     @NonNull
@@ -38,7 +49,7 @@ public final class EditorFileLoaderTask implements Callable<Optional<EditorFile>
             if (infoCursor.moveToFirst()) {
                 final String name = infoCursor.getString(0);
                 final long size = infoCursor.getLong(1);
-                return Optional.of(new EditorFile(uri, name, size));
+                return Optional.of(new EditorFile(uri, name, size, eol));
             } else {
                 return Optional.empty();
             }

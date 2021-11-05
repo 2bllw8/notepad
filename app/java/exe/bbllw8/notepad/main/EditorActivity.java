@@ -57,6 +57,7 @@ import exe.bbllw8.notepad.config.EditorConfig;
 import exe.bbllw8.notepad.config.EditorConfigListener;
 import exe.bbllw8.notepad.help.EditorHelpActivity;
 import exe.bbllw8.notepad.history.EditorHistory;
+import exe.bbllw8.notepad.io.DetectEolTask;
 import exe.bbllw8.notepad.io.EditorFile;
 import exe.bbllw8.notepad.io.EditorFileLoaderTask;
 import exe.bbllw8.notepad.io.EditorFileReaderTask;
@@ -216,6 +217,7 @@ public final class EditorActivity extends Activity implements
                         x.onAutoPairChanged(editorConfig.getAutoPairEnabled());
                         x.onCommandBarVisibilityChanged(editorConfig.getShowCommandBar());
                         x.onShellVisibilityChanged(EditorShell.isEnabled(this));
+                        x.onEolChanged(editorConfig.getEol());
                         // If always dirty (snippet / new blank file) always allow to save
                         x.setSaveAllowed(alwaysAllowSave);
                         return x;
@@ -354,6 +356,11 @@ public final class EditorActivity extends Activity implements
     }
 
     @Override
+    public void setEol(@Config.Eol String eol) {
+        editorConfig.setEol(eol);
+    }
+
+    @Override
     public void setAutoPairEnabled(boolean enabled) {
         editorConfig.setAutoPairEnabled(enabled);
     }
@@ -385,12 +392,24 @@ public final class EditorActivity extends Activity implements
         taskExecutor.runTask(new EditorFileReaderTask(getContentResolver(), editorFile, maxSize),
                 result -> result.forEach(
                         e -> showReadErrorMessage(editorFile, e),
-                        content -> setContent(editorFile, content)));
+                        content -> detectEolAndSetContent(editorFile, content)));
+    }
+
+    private void detectEolAndSetContent(@NonNull EditorFile editorFile, @NonNull String content) {
+        taskExecutor.runTask(new DetectEolTask(content),
+                eol -> {
+                    final EditorFile ef = new EditorFile(editorFile.getUri(),
+                            editorFile.getName(),
+                            editorFile.getSize(),
+                            eol);
+                    setContent(ef, content.replaceAll(eol, "\n"));
+                });
     }
 
     private void loadNewSaveFile(@NonNull Uri uri,
                                  boolean quitWhenSaved) {
-        taskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri),
+        taskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri,
+                        editorConfig.getEol()),
                 editorFile -> saveNewFile(editorFile, quitWhenSaved),
                 this::showOpenErrorMessage);
     }
@@ -415,6 +434,7 @@ public final class EditorActivity extends Activity implements
 
     private void setContent(@NonNull EditorFile editorFile, @NonNull String content) {
         this.editorFile = Optional.of(editorFile);
+        editorConfig.setEol(editorFile.getEol());
         loadView.setVisibility(View.GONE);
         textEditorView.setVisibility(View.VISIBLE);
 
@@ -470,6 +490,8 @@ public final class EditorActivity extends Activity implements
             // We don't need save to be forcefully enabled anymore
             alwaysAllowSave = false;
             editorMenu.ifPresent(x -> x.setSaveAllowed(false));
+
+            editorConfig.setEol(editorFile.getEol());
         }
         setDocumentTitle(editorFile.getName());
         writeContents(editorFile, quitWhenSaved);
@@ -591,6 +613,25 @@ public final class EditorActivity extends Activity implements
     public void onShowCommandBarChanged(boolean show) {
         commandBar.setVisibility(show ? View.VISIBLE : View.GONE);
         editorMenu.ifPresent(x -> x.onCommandBarVisibilityChanged(show));
+    }
+
+    @Override
+    public void onEolChanged(@Config.Eol String newEol) {
+        editorMenu.ifPresent(x -> x.onEolChanged(newEol));
+
+        if (editorFile.map(x -> x.getEol().equals(newEol)).orElse(false)) {
+            // Nothing to do
+            return;
+        }
+
+        editorFile = editorFile.map(ef -> new EditorFile(ef.getUri(),
+                ef.getName(),
+                ef.getSize(),
+                newEol));
+
+        // The text in the view didn't change, but if we
+        // save the file, the output will be different
+        setDirty();
     }
 
     /* Commands */

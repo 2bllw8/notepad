@@ -29,4 +29,6 @@ public interface EditorMenuActions {
     void setCommandBarShown(boolean shown);
 
     void setShellShown(boolean shown);
+
+    void setEol(@Config.Eol String eol);
 }
