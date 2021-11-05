@@ -42,7 +42,7 @@ ext {
             androidx: [
                     annotation: 'androidx.annotation:annotation:1.2.0',
             ],
-            either  : 'io.github.2bllw8:either:2.1.0',
+            either  : 'io.github.2bllw8:either:2.2.0',
     ]
 
     keyStoreFile = file(localProps.getProperty('androidStoreFile'))

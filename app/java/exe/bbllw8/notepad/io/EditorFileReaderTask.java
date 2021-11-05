@@ -11,11 +11,11 @@ import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.concurrent.Callable;
 
 import exe.bbllw8.either.Either;
 import exe.bbllw8.either.Left;
-import exe.bbllw8.either.Right;
 
 public final class EditorFileReaderTask implements Callable<Either<IOException, String>> {
     private static final String TAG = "EditorFileReaderTask";
@@ -44,18 +44,20 @@ public final class EditorFileReaderTask implements Callable<Either<IOException, 
             return new Left<>(new EditorFileTooLargeException(fileSize, maxSize));
         } else {
             final StringBuilder sb = new StringBuilder();
-            try (final InputStream reader = cr.openInputStream(editorFile.getUri())) {
-                final byte[] buffer = new byte[4096];
-                int read = reader.read(buffer, 0, 4096);
-                while (read > 0) {
-                    sb.append(new String(buffer, 0, read));
-                    read = reader.read(buffer, 0, 4096);
+            return Either.tryCatch(() -> {
+                try (final InputStream reader = cr.openInputStream(editorFile.getUri())) {
+                    final byte[] buffer = new byte[4096];
+                    int read = reader.read(buffer, 0, 4096);
+                    while (read > 0) {
+                        sb.append(new String(buffer, 0, read));
+                        read = reader.read(buffer, 0, 4096);
+                    }
+                    return sb.toString();
+                } catch (IOException e) {
+                    Log.e(TAG, "Failed to read the file contents", e);
+                    throw new UncheckedIOException(e);
                 }
-                return new Right<>(sb.toString());
-            } catch (IOException e) {
-                Log.e(TAG, "Failed to read the file contents", e);
-                return new Left<>(e);
-            }
+            }, e -> (IOException) e.getCause());
         }
     }
 }
