@@ -12,6 +12,7 @@ the device storage or other apps.
 - Cursor and selection information
 - Undo actions
 - Automatically close brackets and quotes: `' '`, `" "`, `( )`, `[ ]`, `{ }`
+- Support different EOL
 - Commands
   - `/my text`: find next occurrence of _my text_ from the current cursor position
   - `d/my text`: delete all occurrences of _my text_
@@ -21,6 +22,7 @@ the device storage or other apps.
       (write the number instead of N)
   - `set/key/value`: set config option _key_ to _value_
       - `commands` [`on` | `off`] : Change commands field visibility
+      - `eol` [`cr` | `crlf` | `lf`] : Change EOL character for the saved file
       - `pair` [`on` | `off`] : Enable or disable auto–close brackets and quotes
       - `size` [`large` | `medium` | `small`] : Change text size
       - `style` [`mono` | `sans` | `serif`] : Change text style

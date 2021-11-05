@@ -71,6 +71,10 @@ Configure the application options with the `set` command:
 - `commands`: Change commands field visibility
   - `on`
   - `off`
+- `eol`: Change file end-of-line character
+  - `cr`: Macintosh (`\r`)
+  - `crlf`: Windows (`\r\n`)
+  - `lf`: Unix (`\n`)
 - `pair`: Enable or disable auto–close brackets and quotes
   - `on`
   - `off`
