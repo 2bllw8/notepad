@@ -5,8 +5,6 @@
 <resources>
 
     <style name="AppTheme" parent="android:Theme.DeviceDefault.Light">
-        <item name="android:colorPrimary">@color/shell_primary</item>
-        <item name="android:colorPrimaryDark">@color/shell_primary_dark</item>
         <item name="android:colorAccent">@color/shell_accent</item>
         <item name="android:navigationBarColor">?android:colorPrimary</item>
         <item name="android:statusBarColor">?android:colorPrimary</item>
