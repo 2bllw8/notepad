@@ -38,13 +38,6 @@ ext {
     sourceCompatibilityVersion = JavaVersion.VERSION_11
     targetCompatibilityVersion = JavaVersion.VERSION_11
 
-    lib = [
-            androidx: [
-                    annotation: 'androidx.annotation:annotation:1.2.0',
-            ],
-            either  : 'io.github.2bllw8:either:2.2.0',
-    ]
-
     keyStoreFile = file(localProps.getProperty('androidStoreFile'))
     keyStorePassword = localProps.getProperty('androidStorePassword')
     keyAlias = localProps.getProperty('androidKeyAlias')

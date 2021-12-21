@@ -96,6 +96,9 @@ android {
 }
 
 dependencies {
-    implementation rootProject.ext.lib['androidx']['annotation']
-    implementation rootProject.ext.lib['either']
+    def annotation_version = '1.3.0'
+    def either_version = '2.2.0'
+
+    implementation "androidx.annotation:annotation:$annotation_version"
+    implementation "io.github.2bllw8:either:$either_version"
 }
