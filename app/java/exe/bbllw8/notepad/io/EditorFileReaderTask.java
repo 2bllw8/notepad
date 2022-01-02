@@ -5,26 +5,18 @@
 package exe.bbllw8.notepad.io;
 
 import android.content.ContentResolver;
-import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import java.io.BufferedReader;
-import java.io.FileDescriptor;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
-import java.nio.CharBuffer;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
-import exe.bbllw8.either.Either;
-import exe.bbllw8.either.Left;
+import exe.bbllw8.either.Try;
 
-public final class EditorFileReaderTask implements Callable<Either<IOException, String>> {
+public final class EditorFileReaderTask implements Callable<Try<String>> {
     private static final String TAG = "EditorFileReaderTask";
 
     @NonNull
@@ -43,15 +35,15 @@ public final class EditorFileReaderTask implements Callable<Either<IOException, 
 
     @NonNull
     @Override
-    public Either<IOException, String> call() {
+    public Try<String> call() {
         final long fileSize = editorFile.getSize();
 
-        if (fileSize > maxSize) {
-            Log.e(TAG, "The file is too big: " + fileSize + '/' + maxSize);
-            return new Left<>(new EditorFileTooLargeException(fileSize, maxSize));
-        } else {
-            final StringBuilder sb = new StringBuilder();
-            return Either.tryCatch(() -> {
+        return Try.from(() -> {
+            if (fileSize > maxSize) {
+                Log.e(TAG, "The file is too big: " + fileSize + '/' + maxSize);
+                throw new EditorFileTooLargeException(fileSize, maxSize);
+            } else {
+                final StringBuilder sb = new StringBuilder();
                 try (final InputStream reader = cr.openInputStream(editorFile.getUri())) {
                     final byte[] buffer = new byte[4096];
                     int read = reader.read(buffer, 0, 4096);
@@ -64,7 +56,7 @@ public final class EditorFileReaderTask implements Callable<Either<IOException, 
                     Log.e(TAG, "Failed to read the file contents", e);
                     throw new UncheckedIOException(e);
                 }
-            }, e -> (IOException) e.getCause());
-        }
+            }
+        });
     }
 }

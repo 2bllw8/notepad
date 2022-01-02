@@ -11,12 +11,16 @@ import android.provider.OpenableColumns;
 
 import androidx.annotation.NonNull;
 
+import java.io.FileNotFoundException;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
+import exe.bbllw8.either.Failure;
+import exe.bbllw8.either.Success;
+import exe.bbllw8.either.Try;
 import exe.bbllw8.notepad.config.Config;
 
-public final class EditorFileLoaderTask implements Callable<Optional<EditorFile>> {
+public final class EditorFileLoaderTask implements Callable<Try<EditorFile>> {
     private static final String[] FILE_INFO_QUERY = {
             OpenableColumns.DISPLAY_NAME,
             OpenableColumns.SIZE
@@ -44,14 +48,14 @@ public final class EditorFileLoaderTask implements Callable<Optional<EditorFile>
 
     @NonNull
     @Override
-    public Optional<EditorFile> call() {
+    public Try<EditorFile> call() {
         try (final Cursor infoCursor = cr.query(uri, FILE_INFO_QUERY, null, null, null)) {
             if (infoCursor.moveToFirst()) {
                 final String name = infoCursor.getString(0);
                 final long size = infoCursor.getLong(1);
-                return Optional.of(new EditorFile(uri, name, size, eol));
+                return new Success<>(new EditorFile(uri, name, size, eol));
             } else {
-                return Optional.empty();
+                return new Failure<>(new FileNotFoundException(uri.toString()));
             }
         }
     }

@@ -4,9 +4,8 @@
  */
 package exe.bbllw8.notepad.main;
 
-import android.app.Activity;
-
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -37,7 +36,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
 
-import java.io.IOException;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.Optional;
@@ -383,16 +381,25 @@ public final class EditorActivity extends Activity implements
         loadView.setVisibility(View.VISIBLE);
 
         taskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri),
-                this::readFile,
-                this::showOpenErrorMessage);
+                tryResult -> {
+                    if (tryResult.isSuccess()) {
+                        tryResult.forEach(this::readFile);
+                    } else {
+                        showOpenErrorMessage();
+                    }
+                });
     }
 
     private void readFile(@NonNull EditorFile editorFile) {
         final int maxSize = getResources().getInteger(R.integer.config_max_file_size);
         taskExecutor.runTask(new EditorFileReaderTask(getContentResolver(), editorFile, maxSize),
-                result -> result.forEach(
-                        e -> showReadErrorMessage(editorFile, e),
-                        content -> detectEolAndSetContent(editorFile, content)));
+                tryResult -> {
+                    if (tryResult.isSuccess()) {
+                        tryResult.forEach(content -> detectEolAndSetContent(editorFile, content));
+                    } else {
+                        tryResult.failed().forEach(t -> showReadErrorMessage(editorFile, t));
+                    }
+                });
     }
 
     private void detectEolAndSetContent(@NonNull EditorFile editorFile, @NonNull String content) {
@@ -410,8 +417,13 @@ public final class EditorActivity extends Activity implements
                                  boolean quitWhenSaved) {
         taskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri,
                         editorConfig.getEol()),
-                editorFile -> saveNewFile(editorFile, quitWhenSaved),
-                this::showOpenErrorMessage);
+                tryResult -> {
+                    if (tryResult.isSuccess()) {
+                        tryResult.forEach(editorFile -> saveNewFile(editorFile, quitWhenSaved));
+                    } else {
+                        tryResult.failed().forEach(t -> showOpenErrorMessage());
+                    }
+                });
     }
 
     private void openFileSaver(boolean quitWhenSaved) {
@@ -508,8 +520,8 @@ public final class EditorActivity extends Activity implements
 
         final String contents = textEditorView.getText().toString();
         taskExecutor.runTask(new EditorFileWriterTask(getContentResolver(), editorFile, contents),
-                success -> {
-                    if (success) {
+                tryResult -> {
+                    if (tryResult.isSuccess()) {
                         // Change only the variable, still allow undo
                         dirty = false;
                         final AlertDialog savingDialog = savingDialogRef.get();
@@ -759,9 +771,9 @@ public final class EditorActivity extends Activity implements
     }
 
     private void showReadErrorMessage(@NonNull EditorFile editorFile,
-                                      @NonNull IOException exception) {
-        if (exception instanceof EditorFileTooLargeException) {
-            final EditorFileTooLargeException ftl = (EditorFileTooLargeException) exception;
+                                      @NonNull Throwable throwable) {
+        if (throwable instanceof EditorFileTooLargeException) {
+            final EditorFileTooLargeException ftl = (EditorFileTooLargeException) throwable;
             showFatalErrorMessage(getString(R.string.error_read_size, editorFile.getName(),
                     ftl.getFileSize() / ONE_MB, ftl.getMaxSize() / ONE_MB));
         } else {
