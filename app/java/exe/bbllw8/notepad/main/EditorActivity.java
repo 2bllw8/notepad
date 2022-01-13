@@ -373,57 +373,43 @@ public final class EditorActivity extends Activity implements
         loadView.setVisibility(View.VISIBLE);
 
         taskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri),
-                tryResult -> {
-                    if (tryResult.isSuccess()) {
-                        tryResult.forEach(this::readFile);
-                    } else {
-                        tryResult.failed().forEach(t -> {
-                            Log.e(TAG, "Failed to load file", t);
+                tryResult -> tryResult.forEach(
+                        this::readFile,
+                        err -> {
+                            Log.e(TAG, "Failed to load file", err);
                             showOpenErrorMessage();
-                        });
-                    }
-                });
+                        }));
     }
 
     private void readFile(EditorFile editorFile) {
         final int maxSize = getResources().getInteger(R.integer.config_max_file_size);
         taskExecutor.runTask(new EditorFileReaderTask(getContentResolver(), editorFile, maxSize),
-                tryResult -> {
-                    if (tryResult.isSuccess()) {
-                        tryResult.forEach(content -> detectEolAndSetContent(editorFile, content));
-                    } else {
-                        tryResult.failed().forEach(t -> {
-                            Log.e(TAG, "Failed to read the file contents", t);
-                            showReadErrorMessage(editorFile, t);
-                        });
-                    }
-                });
+                tryResult -> tryResult.forEach(
+                        content -> detectEolAndSetContent(editorFile, content),
+                        err -> {
+                            Log.e(TAG, "Failed to read the file contents", err);
+                            showReadErrorMessage(editorFile, err);
+                        }));
     }
 
     private void detectEolAndSetContent(EditorFile editorFile, String content) {
         taskExecutor.runTask(new DetectEolTask(content),
-                eol -> {
-                    final EditorFile ef = new EditorFile(editorFile.getUri(),
-                            editorFile.getName(),
-                            editorFile.getSize(),
-                            eol);
-                    setContent(ef, content.replaceAll(eol, "\n"));
-                });
+                eol -> setContent(new EditorFile(editorFile.getUri(),
+                                editorFile.getName(),
+                                editorFile.getSize(),
+                                eol),
+                        content.replaceAll(eol, "\n")));
     }
 
     private void loadNewSaveFile(Uri uri, boolean quitWhenSaved) {
         taskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri,
                         editorConfig.getEol()),
-                tryResult -> {
-                    if (tryResult.isSuccess()) {
-                        tryResult.forEach(editorFile -> saveNewFile(editorFile, quitWhenSaved));
-                    } else {
-                        tryResult.failed().forEach(t -> {
-                            Log.e(TAG, "Failed to set destination file", t);
+                tryResult -> tryResult.forEach(
+                        editorFile -> saveNewFile(editorFile, quitWhenSaved),
+                        err -> {
+                            Log.e(TAG, "Failed to set destination file", err);
                             showOpenErrorMessage();
-                        });
-                    }
-                });
+                        }));
     }
 
     private void openFileSaver(boolean quitWhenSaved) {
@@ -520,22 +506,20 @@ public final class EditorActivity extends Activity implements
 
         final String contents = textEditorView.getText().toString();
         taskExecutor.runTask(new EditorFileWriterTask(getContentResolver(), editorFile, contents),
-                tryResult -> {
-                    if (tryResult.isSuccess()) {
-                        // Change only the variable, still allow undo
-                        dirty = false;
-                        final AlertDialog savingDialog = savingDialogRef.get();
-                        if (savingDialog != null && savingDialog.isShowing()) {
-                            savingDialog.dismiss();
-                        }
-                        showSavedMessage(quitWhenSaved);
-                    } else {
-                        tryResult.failed().forEach(t -> {
-                            Log.e(TAG, "Failed to write file content", t);
+                tryResult -> tryResult.forEach(
+                        $ -> {
+                            // Change only the variable, still allow undo
+                            dirty = false;
+                            final AlertDialog savingDialog = savingDialogRef.get();
+                            if (savingDialog != null && savingDialog.isShowing()) {
+                                savingDialog.dismiss();
+                            }
+                            showSavedMessage(quitWhenSaved);
+                        },
+                        err -> {
+                            Log.e(TAG, "Failed to write file content", err);
                             showWriteErrorMessage(editorFile);
-                        });
-                    }
-                });
+                        }));
     }
 
     /* UI */
@@ -674,16 +658,12 @@ public final class EditorActivity extends Activity implements
     @Override
     public void runSubstituteCommand(SubstituteCommandTask substituteTask) {
         taskExecutor.runTask(substituteTask,
-                tryResult -> {
-                    if (tryResult.isSuccess()) {
-                        tryResult.forEach(textEditorView::setText);
-                    } else {
-                        tryResult.failed().forEach(t -> {
-                            Log.e(TAG, "Failed to run substitution", t);
+                tryResult -> tryResult.forEach(
+                        textEditorView::setText,
+                        err -> {
+                            Log.e(TAG, "Failed to run substitution", err);
                             showTmpMessage(R.string.error_substitution);
-                        });
-                    }
-                });
+                        }));
     }
 
     /* Dirty */
