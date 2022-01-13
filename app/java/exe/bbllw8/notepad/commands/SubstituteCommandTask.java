@@ -2,23 +2,25 @@
  * Copyright (c) 2021 2bllw8
  * SPDX-License-Identifier: GPL-3.0-only
  */
-package exe.bbllw8.notepad.commands.task;
+package exe.bbllw8.notepad.commands;
 
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 
-public final class SubstituteFirstCommandTask implements Callable<String> {
+public final class SubstituteCommandTask implements Callable<CharSequence> {
+    public static final int ALL = -1;
+
     private final String toFind;
     private final String replacement;
     private final String content;
     private final int count;
     private final int cursor;
 
-    public SubstituteFirstCommandTask(String toFind,
-                                      String replacement,
-                                      String content,
-                                      int count,
-                                      int cursor) {
+    public SubstituteCommandTask(String toFind,
+                                 String replacement,
+                                 String content,
+                                 int cursor,
+                                 int count) {
         this.toFind = toFind;
         this.replacement = replacement;
         this.content = content;
@@ -28,9 +30,14 @@ public final class SubstituteFirstCommandTask implements Callable<String> {
 
     @Override
     public String call() {
-        return content.substring(0, cursor) + substitute(Pattern.compile(toFind),
-                content.substring(cursor),
-                count);
+        final Pattern pattern = Pattern.compile(toFind);
+        if (count == ALL) {
+            return pattern.matcher(content).replaceAll(replacement);
+        } else {
+            return content.substring(0, cursor) + substitute(pattern,
+                    content.substring(cursor),
+                    count);
+        }
     }
 
     private String substitute(Pattern pattern,

@@ -6,34 +6,21 @@ package exe.bbllw8.notepad.commands;
 
 public interface EditorCommandsExecutor {
 
-    void runFindCommand(EditorCommand.Find command);
+    void runFindCommand(FindCommandTask findTask);
 
-    void runDeleteAllCommand(EditorCommand.DeleteAll command);
+    void runSubstituteCommand(SubstituteCommandTask substituteTask);
 
-    void runDeleteFirstCommand(EditorCommand.DeleteFirst command);
-
-    void runSubstituteAllCommand(EditorCommand.SubstituteAll command);
-
-    void runSubstituteFirstCommand(EditorCommand.SubstituteFirst command);
-
-    default boolean runCommand(EditorCommand command) {
-        if (command instanceof EditorCommand.Find) {
-            runFindCommand((EditorCommand.Find) command);
+    default boolean runEditorCommand(String command, String content, int cursor) {
+        return EditorCommandParser.parse(command).map(either -> {
+            either.forEach(
+                    find -> runFindCommand(new FindCommandTask(find.getToFind(), content, cursor)),
+                    substitution -> runSubstituteCommand(new SubstituteCommandTask(
+                            substitution.getToFind(),
+                            substitution.getSubstituteWith(),
+                            content,
+                            cursor,
+                            substitution.getCount())));
             return true;
-        } else if (command instanceof EditorCommand.DeleteAll) {
-            runDeleteAllCommand((EditorCommand.DeleteAll) command);
-            return true;
-        } else if (command instanceof EditorCommand.DeleteFirst) {
-            runDeleteFirstCommand((EditorCommand.DeleteFirst) command);
-            return true;
-        } else if (command instanceof EditorCommand.SubstituteAll) {
-            runSubstituteAllCommand((EditorCommand.SubstituteAll) command);
-            return true;
-        } else if (command instanceof EditorCommand.SubstituteFirst) {
-            runSubstituteFirstCommand((EditorCommand.SubstituteFirst) command);
-            return true;
-        } else {
-            return false;
-        }
+        }).orElse(false);
     }
 }
