@@ -5,4 +5,5 @@
 <resources>
     <color name="shell_primary">#1b1b1b</color>
     <color name="shell_primary_dark">#1b1b1b</color>
+    <color name="shell_accent">#8395C9</color>
 </resources>
