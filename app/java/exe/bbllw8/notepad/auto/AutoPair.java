@@ -15,6 +15,10 @@ import java.util.function.Supplier;
 public final class AutoPair implements TextWatcher {
     private static final Map<Character, String> PAIR_MAP = new HashMap<>();
 
+    private static final byte STATUS_ENABLED = 1;
+    private static final byte STATUS_TRACKING = 1 << 1;
+    private static final byte STATUS_ENABLED_AND_TRACKING = STATUS_ENABLED | STATUS_TRACKING;
+
     static {
         PAIR_MAP.put('\'', "'");
         PAIR_MAP.put('"', "\"");
@@ -25,13 +29,11 @@ public final class AutoPair implements TextWatcher {
     }
 
     private final Supplier<Editable> editableTextSupplier;
-    private boolean enabled;
-    private boolean trackChanges;
+    private byte status;
 
     public AutoPair(Supplier<Editable> editableTextSupplier) {
         this.editableTextSupplier = editableTextSupplier;
-        this.enabled = false;
-        this.trackChanges = true;
+        this.status = STATUS_TRACKING;
     }
 
     @Override
@@ -40,7 +42,7 @@ public final class AutoPair implements TextWatcher {
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if (enabled && trackChanges) {
+        if (status == STATUS_ENABLED_AND_TRACKING) {
             if (count == 1) {
                 final int i = start + 1;
                 final char typed = s.subSequence(start, i).charAt(0);
@@ -48,9 +50,9 @@ public final class AutoPair implements TextWatcher {
 
                 if (closePair != null) {
                     final Editable editable = editableTextSupplier.get();
-                    trackChanges = false;
+                    status &= ~STATUS_TRACKING;
                     editable.insert(i, closePair);
-                    trackChanges = true;
+                    status |= STATUS_TRACKING;
 
                     Selection.setSelection(editable, i);
                 }
@@ -63,6 +65,10 @@ public final class AutoPair implements TextWatcher {
     }
 
     public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+        if (enabled) {
+            status |= STATUS_ENABLED;
+        } else {
+            status &= ~STATUS_ENABLED;
+        }
     }
 }
