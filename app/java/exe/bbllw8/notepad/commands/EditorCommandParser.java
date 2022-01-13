@@ -11,7 +11,6 @@ import exe.bbllw8.notepad.commands.parse.CommandParser;
 import exe.bbllw8.notepad.commands.parse.DeleteAllCommandParser;
 import exe.bbllw8.notepad.commands.parse.DeleteFirstCommandParser;
 import exe.bbllw8.notepad.commands.parse.FindCommandParser;
-import exe.bbllw8.notepad.commands.parse.SetCommandParser;
 import exe.bbllw8.notepad.commands.parse.SubstituteAllCommandParser;
 import exe.bbllw8.notepad.commands.parse.SubstituteFirstCommandParser;
 
@@ -22,7 +21,6 @@ public final class EditorCommandParser {
         COMMAND_PARSERS = new CommandParser<?>[]{
                 new DeleteAllCommandParser(),
                 new DeleteFirstCommandParser(),
-                new SetCommandParser(),
                 new SubstituteAllCommandParser(),
                 new SubstituteFirstCommandParser(),
                 // Find always last resort

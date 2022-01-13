@@ -52,25 +52,6 @@ public class EditorCommand {
         }
     }
 
-    public final static class Set extends EditorCommand {
-        private final String key;
-        private final String value;
-
-        public Set(String key,
-                   String value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public String getValue() {
-            return value;
-        }
-    }
-
     public final static class SubstituteAll extends EditorCommand {
         private final String toFind;
         private final String replaceWith;

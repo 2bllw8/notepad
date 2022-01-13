@@ -20,12 +20,6 @@ the device storage or other apps.
   - `s/my text/new text`: substitute all occurrences of _my text_ with _new text_
   - `N s/my text/new text`: substitute first N occurrences of _my text_ with _new text_
       (write the number instead of N)
-  - `set/key/value`: set config option _key_ to _value_
-      - `commands` [`on` | `off`] : Change commands field visibility
-      - `eol` [`cr` | `crlf` | `lf`] : Change EOL character for the saved file
-      - `pair` [`on` | `off`] : Enable or disable auto–close brackets and quotes
-      - `size` [`large` | `medium` | `small`] : Change text size
-      - `style` [`mono` | `sans` | `serif`] : Change text style
 - Open selected text from other apps as a new text file and save it on the device
 - Keyboard shortcuts
   - `ctrl` + `N`: Create a new file

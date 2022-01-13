@@ -684,14 +684,6 @@ public final class EditorActivity extends Activity implements
     }
 
     @Override
-    public void runSetCommand(EditorCommand.Set command) {
-        final boolean success = editorConfig.setByKeyVal(command.getKey(), command.getValue());
-        showTmpMessage(success
-                ? R.string.command_set_success
-                : R.string.command_unknown);
-    }
-
-    @Override
     public void runSubstituteAllCommand(EditorCommand.SubstituteAll command) {
         final String content = textEditorView.getText().toString();
         taskExecutor.runTask(new SubstituteAllCommandTask(command.getToFind(),

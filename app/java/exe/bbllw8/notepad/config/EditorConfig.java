@@ -7,8 +7,6 @@ package exe.bbllw8.notepad.config;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.util.function.Consumer;
-
 public final class EditorConfig {
     private static final String CONFIG_PREFERENCES = "config";
 
@@ -17,27 +15,7 @@ public final class EditorConfig {
     private static final String KEY_AUTO_PAIR = "auto_pair";
     private static final String KEY_SHOW_COMMAND_BAR = "show_command_bar";
 
-    private static final String CMD_KEY_AUTO_PAIR = "pair";
-    private static final String CMD_KEY_SHOW_CMD_BAR = "commands";
-    private static final String CMD_KEY_TEXT_SIZE = "size";
-    private static final String CMD_KEY_TEXT_STYLE = "style";
-    private static final String CMD_KEY_EOL = "eol";
-
-    private static final String CMD_VAL_DEFAULT = "default";
-    private static final String CMD_VAL_OFF = "off";
-    private static final String CMD_VAL_ON = "on";
-    private static final String CMD_VAL_SIZE_LARGE = "large";
-    private static final String CMD_VAL_SIZE_MEDIUM = "medium";
-    private static final String CMD_VAL_SIZE_SMALL = "small";
-    private static final String CMD_VAL_STYLE_MONO = "mono";
-    private static final String CMD_VAL_STYLE_SANS = "sans";
-    private static final String CMD_VAL_STYlE_SERIF = "serif";
-    private static final String CMD_VAL_EOL_CR = "cr";
-    private static final String CMD_VAL_EOL_CRLF = "crlf";
-    private static final String CMD_VAL_EOL_LF = "lf";
-
     private final EditorConfigListener configListener;
-
     private final SharedPreferences preferences;
 
     // Runtime configs
@@ -135,98 +113,6 @@ public final class EditorConfig {
             case Config.Size.LARGE:
                 setTextSize(Config.Size.MEDIUM);
                 break;
-        }
-    }
-
-    public boolean setByKeyVal(String key,
-                               String value) {
-        switch (key) {
-            case CMD_KEY_AUTO_PAIR:
-                return applyBooleanCommand(this::setAutoPairEnabled,
-                        value, Config.DEFAULT_AUTO_PAIR);
-            case CMD_KEY_SHOW_CMD_BAR:
-                return applyBooleanCommand(this::setShowCommandBar,
-                        value, Config.DEFAULT_SHOW_COMMAND_BAR);
-            case CMD_KEY_TEXT_SIZE:
-                return applyTextSizeCommand(value);
-            case CMD_KEY_TEXT_STYLE:
-                return applyTextStyleCommand(value);
-            case CMD_KEY_EOL:
-                return applyEolCommand(value);
-            default:
-                return false;
-        }
-    }
-
-    private boolean applyBooleanCommand(Consumer<Boolean> applier,
-                                        String value,
-                                        boolean defaultValue) {
-        switch (value) {
-            case CMD_VAL_DEFAULT:
-                applier.accept(defaultValue);
-                return true;
-            case CMD_VAL_ON:
-                applier.accept(true);
-                return true;
-            case CMD_VAL_OFF:
-                applier.accept(false);
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    private boolean applyTextSizeCommand(String value) {
-        switch (value) {
-            case CMD_VAL_DEFAULT:
-                setTextSize(Config.DEFAULT_SIZE);
-                return true;
-            case CMD_VAL_SIZE_LARGE:
-                setTextSize(Config.Size.LARGE);
-                return true;
-            case CMD_VAL_SIZE_MEDIUM:
-                setTextSize(Config.Size.MEDIUM);
-                return true;
-            case CMD_VAL_SIZE_SMALL:
-                setTextSize(Config.Size.SMALL);
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    private boolean applyTextStyleCommand(String value) {
-        switch (value) {
-            case CMD_VAL_DEFAULT:
-                setTextStyle(Config.DEFAULT_STYLE);
-                return true;
-            case CMD_VAL_STYLE_MONO:
-                setTextStyle(Config.Style.MONO);
-                return true;
-            case CMD_VAL_STYLE_SANS:
-                setTextStyle(Config.Style.SANS);
-                return true;
-            case CMD_VAL_STYlE_SERIF:
-                setTextStyle(Config.Style.SERIF);
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    private boolean applyEolCommand(String value) {
-        switch (value) {
-            case CMD_VAL_EOL_CR:
-                setEol(Config.Eol.CR);
-                return true;
-            case CMD_VAL_EOL_LF:
-                setEol(Config.Eol.LF);
-                return true;
-            case CMD_VAL_EOL_CRLF:
-                setEol(Config.Eol.CRLF);
-                return true;
-            default:
-                return false;
         }
     }
 }

@@ -64,35 +64,6 @@ Run `1 s/quick/hungry` assuming the cursor is at the beginning of the line, tran
 >"A hungry fox jumps over the lazy dog. The fox is quick"
 
 
-## Configuration
-
-Configure the application options with the `set` command:
-
-- `commands`: Change commands field visibility
-  - `on`
-  - `off`
-- `eol`: Change file end-of-line character
-  - `cr`: Macintosh (`\r`)
-  - `crlf`: Windows (`\r\n`)
-  - `lf`: Unix (`\n`)
-- `pair`: Enable or disable auto–close brackets and quotes
-  - `on`
-  - `off`
-- `size`: Change text size
-  - `large`
-  - `medium`
-  - `small`
-- `style`: Change text style
-  - `mono`
-  - `sans`
-  - `serif`
-
-
-To configure an option with the set command type: `set/name/value` (replacing _name_ with
-the name of the option to be configured and _value_ with the desired configuration value).
-For example `set/style/mono` sets the text style to monospace.
-
-
 # Keyboard shortcuts
 
 You can use these handy keyboard shortcuts to help you navigate through the app more
