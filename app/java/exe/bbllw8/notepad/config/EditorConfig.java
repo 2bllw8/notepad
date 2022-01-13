@@ -7,8 +7,6 @@ package exe.bbllw8.notepad.config;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import androidx.annotation.NonNull;
-
 import java.util.function.Consumer;
 
 public final class EditorConfig {
@@ -38,20 +36,17 @@ public final class EditorConfig {
     private static final String CMD_VAL_EOL_CRLF = "crlf";
     private static final String CMD_VAL_EOL_LF = "lf";
 
-    @NonNull
     private final EditorConfigListener configListener;
 
-    @NonNull
     private final SharedPreferences preferences;
 
     // Runtime configs
 
     @Config.Eol
-    @NonNull
     private String eol;
 
-    public EditorConfig(@NonNull Context context,
-                        @NonNull EditorConfigListener listener) {
+    public EditorConfig(Context context,
+                        EditorConfigListener listener) {
         this.configListener = listener;
         this.preferences = context.getSharedPreferences(CONFIG_PREFERENCES, Context.MODE_PRIVATE);
         this.eol = System.lineSeparator();
@@ -104,12 +99,11 @@ public final class EditorConfig {
     }
 
     @Config.Eol
-    @NonNull
     public String getEol() {
         return eol;
     }
 
-    public void setEol(@Config.Eol @NonNull String eol) {
+    public void setEol(@Config.Eol String eol) {
         this.eol = eol;
         configListener.onEolChanged(eol);
     }
@@ -144,8 +138,8 @@ public final class EditorConfig {
         }
     }
 
-    public boolean setByKeyVal(@NonNull String key,
-                               @NonNull String value) {
+    public boolean setByKeyVal(String key,
+                               String value) {
         switch (key) {
             case CMD_KEY_AUTO_PAIR:
                 return applyBooleanCommand(this::setAutoPairEnabled,
@@ -164,8 +158,8 @@ public final class EditorConfig {
         }
     }
 
-    private boolean applyBooleanCommand(@NonNull Consumer<Boolean> applier,
-                                        @NonNull String value,
+    private boolean applyBooleanCommand(Consumer<Boolean> applier,
+                                        String value,
                                         boolean defaultValue) {
         switch (value) {
             case CMD_VAL_DEFAULT:
@@ -182,7 +176,7 @@ public final class EditorConfig {
         }
     }
 
-    private boolean applyTextSizeCommand(@NonNull String value) {
+    private boolean applyTextSizeCommand(String value) {
         switch (value) {
             case CMD_VAL_DEFAULT:
                 setTextSize(Config.DEFAULT_SIZE);
@@ -201,7 +195,7 @@ public final class EditorConfig {
         }
     }
 
-    private boolean applyTextStyleCommand(@NonNull String value) {
+    private boolean applyTextStyleCommand(String value) {
         switch (value) {
             case CMD_VAL_DEFAULT:
                 setTextStyle(Config.DEFAULT_STYLE);
@@ -220,7 +214,7 @@ public final class EditorConfig {
         }
     }
 
-    private boolean applyEolCommand(@NonNull String value) {
+    private boolean applyEolCommand(String value) {
         switch (value) {
             case CMD_VAL_EOL_CR:
                 setEol(Config.Eol.CR);

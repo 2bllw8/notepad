@@ -19,21 +19,18 @@ import exe.bbllw8.either.Try;
 public final class EditorFileReaderTask implements Callable<Try<String>> {
     private static final String TAG = "EditorFileReaderTask";
 
-    @NonNull
     private final ContentResolver cr;
-    @NonNull
     private final EditorFile editorFile;
     private final int maxSize;
 
-    public EditorFileReaderTask(@NonNull ContentResolver cr,
-                                @NonNull EditorFile editorFile,
+    public EditorFileReaderTask(ContentResolver cr,
+                                EditorFile editorFile,
                                 int maxSize) {
         this.cr = cr;
         this.editorFile = editorFile;
         this.maxSize = maxSize;
     }
 
-    @NonNull
     @Override
     public Try<String> call() {
         final long fileSize = editorFile.getSize();

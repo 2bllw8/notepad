@@ -4,23 +4,21 @@
  */
 package exe.bbllw8.notepad.commands;
 
-import androidx.annotation.NonNull;
-
 public interface EditorCommandsExecutor {
 
-    void runFindCommand(@NonNull EditorCommand.Find command);
+    void runFindCommand(EditorCommand.Find command);
 
-    void runDeleteAllCommand(@NonNull EditorCommand.DeleteAll command);
+    void runDeleteAllCommand(EditorCommand.DeleteAll command);
 
-    void runDeleteFirstCommand(@NonNull EditorCommand.DeleteFirst command);
+    void runDeleteFirstCommand(EditorCommand.DeleteFirst command);
 
-    void runSetCommand(@NonNull EditorCommand.Set command);
+    void runSetCommand(EditorCommand.Set command);
 
-    void runSubstituteAllCommand(@NonNull EditorCommand.SubstituteAll command);
+    void runSubstituteAllCommand(EditorCommand.SubstituteAll command);
 
-    void runSubstituteFirstCommand(@NonNull EditorCommand.SubstituteFirst command);
+    void runSubstituteFirstCommand(EditorCommand.SubstituteFirst command);
 
-    default boolean runCommand(@NonNull EditorCommand command) {
+    default boolean runCommand(EditorCommand command) {
         if (command instanceof EditorCommand.Find) {
             runFindCommand((EditorCommand.Find) command);
             return true;

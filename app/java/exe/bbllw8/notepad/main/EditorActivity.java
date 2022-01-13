@@ -94,13 +94,9 @@ public final class EditorActivity extends Activity implements
     private EditorHistory editorHistory;
     private AutoPair autoPair;
 
-    @NonNull
     private final TaskExecutor taskExecutor = new TaskExecutor();
-    @NonNull
     private final EditorCommandParser editorCommandParser = new EditorCommandParser();
-    @NonNull
     private Optional<EditorFile> editorFile = Optional.empty();
-    @NonNull
     private Optional<EditorMenu> editorMenu = Optional.empty();
 
     @Override
@@ -376,7 +372,7 @@ public final class EditorActivity extends Activity implements
 
     /* File loading */
 
-    private void loadFile(@NonNull Uri uri) {
+    private void loadFile(Uri uri) {
         summaryView.setText(R.string.summary_loading);
         loadView.setVisibility(View.VISIBLE);
 
@@ -390,7 +386,7 @@ public final class EditorActivity extends Activity implements
                 });
     }
 
-    private void readFile(@NonNull EditorFile editorFile) {
+    private void readFile(EditorFile editorFile) {
         final int maxSize = getResources().getInteger(R.integer.config_max_file_size);
         taskExecutor.runTask(new EditorFileReaderTask(getContentResolver(), editorFile, maxSize),
                 tryResult -> {
@@ -402,7 +398,7 @@ public final class EditorActivity extends Activity implements
                 });
     }
 
-    private void detectEolAndSetContent(@NonNull EditorFile editorFile, @NonNull String content) {
+    private void detectEolAndSetContent(EditorFile editorFile, String content) {
         taskExecutor.runTask(new DetectEolTask(content),
                 eol -> {
                     final EditorFile ef = new EditorFile(editorFile.getUri(),
@@ -413,8 +409,7 @@ public final class EditorActivity extends Activity implements
                 });
     }
 
-    private void loadNewSaveFile(@NonNull Uri uri,
-                                 boolean quitWhenSaved) {
+    private void loadNewSaveFile(Uri uri, boolean quitWhenSaved) {
         taskExecutor.runTask(new EditorFileLoaderTask(getContentResolver(), uri,
                         editorConfig.getEol()),
                 tryResult -> {
@@ -444,7 +439,7 @@ public final class EditorActivity extends Activity implements
 
     /* Content operations */
 
-    private void setContent(@NonNull EditorFile editorFile, @NonNull String content) {
+    private void setContent(EditorFile editorFile, String content) {
         this.editorFile = Optional.of(editorFile);
         editorConfig.setEol(editorFile.getEol());
         loadView.setVisibility(View.GONE);
@@ -455,7 +450,7 @@ public final class EditorActivity extends Activity implements
         setContentInView(content);
     }
 
-    private void setContentInView(@NonNull String content) {
+    private void setContentInView(String content) {
         if (Build.VERSION.SDK_INT >= 28) {
             setContentInViewAsync(content);
         } else {
@@ -465,7 +460,7 @@ public final class EditorActivity extends Activity implements
     }
 
     @RequiresApi(28)
-    private void setContentInViewAsync(@NonNull String content) {
+    private void setContentInViewAsync(String content) {
         final PrecomputedText.Params params = textEditorView.getTextMetricsParams();
         final Reference<TextEditorView> editorViewRef = new WeakReference<>(textEditorView);
 
@@ -495,7 +490,7 @@ public final class EditorActivity extends Activity implements
         }
     }
 
-    private void saveNewFile(@NonNull EditorFile editorFile,
+    private void saveNewFile(EditorFile editorFile,
                              boolean quitWhenSaved) {
         this.editorFile = Optional.of(editorFile);
         if (!quitWhenSaved) {
@@ -509,7 +504,7 @@ public final class EditorActivity extends Activity implements
         writeContents(editorFile, quitWhenSaved);
     }
 
-    private void writeContents(@NonNull EditorFile editorFile,
+    private void writeContents(EditorFile editorFile,
                                boolean quitWhenSaved) {
         final WeakReference<AlertDialog> savingDialogRef = new WeakReference<>(
                 new AlertDialog.Builder(this)
@@ -658,7 +653,7 @@ public final class EditorActivity extends Activity implements
     }
 
     @Override
-    public void runFindCommand(@NonNull EditorCommand.Find command) {
+    public void runFindCommand(EditorCommand.Find command) {
         final String content = textEditorView.getText().toString();
         final int selectionEnd = textEditorView.getSelectionEnd();
         final int cursor = selectionEnd == -1
@@ -673,14 +668,14 @@ public final class EditorActivity extends Activity implements
     }
 
     @Override
-    public void runDeleteAllCommand(@NonNull EditorCommand.DeleteAll command) {
+    public void runDeleteAllCommand(EditorCommand.DeleteAll command) {
         final String content = textEditorView.getText().toString();
         taskExecutor.runTask(new DeleteAllCommandTask(command.getToDelete(), content),
                 textEditorView::setText);
     }
 
     @Override
-    public void runDeleteFirstCommand(@NonNull EditorCommand.DeleteFirst command) {
+    public void runDeleteFirstCommand(EditorCommand.DeleteFirst command) {
         final String content = textEditorView.getText().toString();
         final int cursor = textEditorView.getSelectionStart();
         taskExecutor.runTask(new DeleteFirstCommandTask(command.getToDelete(),
@@ -689,7 +684,7 @@ public final class EditorActivity extends Activity implements
     }
 
     @Override
-    public void runSetCommand(@NonNull EditorCommand.Set command) {
+    public void runSetCommand(EditorCommand.Set command) {
         final boolean success = editorConfig.setByKeyVal(command.getKey(), command.getValue());
         showTmpMessage(success
                 ? R.string.command_set_success
@@ -697,7 +692,7 @@ public final class EditorActivity extends Activity implements
     }
 
     @Override
-    public void runSubstituteAllCommand(@NonNull EditorCommand.SubstituteAll command) {
+    public void runSubstituteAllCommand(EditorCommand.SubstituteAll command) {
         final String content = textEditorView.getText().toString();
         taskExecutor.runTask(new SubstituteAllCommandTask(command.getToFind(),
                         command.getReplaceWith(), content),
@@ -705,7 +700,7 @@ public final class EditorActivity extends Activity implements
     }
 
     @Override
-    public void runSubstituteFirstCommand(@NonNull EditorCommand.SubstituteFirst command) {
+    public void runSubstituteFirstCommand(EditorCommand.SubstituteFirst command) {
         final String content = textEditorView.getText().toString();
         final int cursor = textEditorView.getSelectionStart();
         taskExecutor.runTask(new SubstituteFirstCommandTask(command.getToFind(),
@@ -738,7 +733,7 @@ public final class EditorActivity extends Activity implements
     /* Dialogs */
 
     private void showSavedMessage(boolean finishOnShown) {
-        Toast.makeText(this, R.string.save_success, Toast.LENGTH_LONG).show();
+        showTmpMessage(R.string.save_success);
         if (finishOnShown) {
             finish();
         }
@@ -770,22 +765,24 @@ public final class EditorActivity extends Activity implements
         showFatalErrorMessage(getString(R.string.error_open));
     }
 
-    private void showReadErrorMessage(@NonNull EditorFile editorFile,
-                                      @NonNull Throwable throwable) {
+    private void showReadErrorMessage(EditorFile editorFile,
+                                      Throwable throwable) {
         if (throwable instanceof EditorFileTooLargeException) {
             final EditorFileTooLargeException ftl = (EditorFileTooLargeException) throwable;
-            showFatalErrorMessage(getString(R.string.error_read_size, editorFile.getName(),
-                    ftl.getFileSize() / ONE_MB, ftl.getMaxSize() / ONE_MB));
+            showFatalErrorMessage(getString(R.string.error_read_size,
+                    editorFile.getName(),
+                    ftl.getFileSize() / ONE_MB,
+                    ftl.getMaxSize() / ONE_MB));
         } else {
             showFatalErrorMessage(getString(R.string.error_read_generic, editorFile.getName()));
         }
     }
 
-    private void showWriteErrorMessage(@NonNull EditorFile editorFile) {
+    private void showWriteErrorMessage(EditorFile editorFile) {
         showFatalErrorMessage(getString(R.string.save_failed, editorFile.getName()));
     }
 
-    private void showFatalErrorMessage(@NonNull CharSequence message) {
+    private void showFatalErrorMessage(CharSequence message) {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.error_title)
                 .setMessage(message)

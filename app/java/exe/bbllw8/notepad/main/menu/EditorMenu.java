@@ -9,51 +9,35 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
 
 import exe.bbllw8.notepad.R;
 import exe.bbllw8.notepad.config.Config;
 
 public final class EditorMenu {
-    @NonNull
     private final EditorMenuActions actions;
 
-    @NonNull
     private final MenuItem undoMenuItem;
-    @NonNull
     private final MenuItem saveMenuItem;
 
-    @NonNull
     private final MenuItem sizeSmallMenuItem;
-    @NonNull
     private final MenuItem sizeMediumMenuItem;
-    @NonNull
     private final MenuItem sizeLargeMenuItem;
 
-    @NonNull
     private final MenuItem styleMonoMenuItem;
-    @NonNull
     private final MenuItem styleSansMenuItem;
-    @NonNull
     private final MenuItem styleSerifMenuItem;
 
-    @NonNull
     private final MenuItem eolCrMenuItem;
-    @NonNull
     private final MenuItem eolCrLfMenuItem;
-    @NonNull
     private final MenuItem eolLfMenuItem;
 
-    @NonNull
     private final MenuItem autoPairMenuItem;
-    @NonNull
     private final MenuItem showCommandBarMenuItem;
-    @NonNull
     private final MenuItem showShellMenuItem;
 
-    public EditorMenu(@NonNull EditorMenuActions actions,
-                      @NonNull Menu menu,
-                      @NonNull MenuInflater inflater) {
+    public EditorMenu(EditorMenuActions actions,
+                      Menu menu,
+                      MenuInflater inflater) {
         this.actions = actions;
 
         inflater.inflate(R.menu.editor_menu, menu);
@@ -177,7 +161,7 @@ public final class EditorMenu {
         showShellMenuItem.setChecked(isVisible);
     }
 
-    public void onEolChanged(@NonNull @Config.Eol String eol) {
+    public void onEolChanged(@Config.Eol String eol) {
         switch (eol) {
             case Config.Eol.CR:
                 eolCrMenuItem.setChecked(true);

@@ -8,14 +8,11 @@ import android.text.Editable;
 import android.text.Selection;
 import android.text.TextWatcher;
 
-import androidx.annotation.NonNull;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
 public final class AutoPair implements TextWatcher {
-
     private static final Map<Character, String> PAIR_MAP = new HashMap<>();
 
     static {
@@ -27,12 +24,11 @@ public final class AutoPair implements TextWatcher {
         PAIR_MAP.put('{', "}");
     }
 
-    @NonNull
     private final Supplier<Editable> editableTextSupplier;
     private boolean enabled;
     private boolean trackChanges;
 
-    public AutoPair(@NonNull Supplier<Editable> editableTextSupplier) {
+    public AutoPair(Supplier<Editable> editableTextSupplier) {
         this.editableTextSupplier = editableTextSupplier;
         this.enabled = false;
         this.trackChanges = true;

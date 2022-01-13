@@ -8,23 +8,20 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
-import exe.bbllw8.notepad.markdown.MarkdownFormatter;
 import exe.bbllw8.notepad.R;
+import exe.bbllw8.notepad.markdown.MarkdownFormatter;
 
 final class LoadHelpContentTextTask implements Callable<Optional<CharSequence>> {
     private static final String TAG = "LoadHelpTextTask";
-    @NonNull
     private final Resources resources;
     private final MarkdownFormatter formatter;
 
-    public LoadHelpContentTextTask(@NonNull Context context) {
+    public LoadHelpContentTextTask(Context context) {
         this.resources = context.getResources();
         this.formatter = new MarkdownFormatter(context.getColor(R.color.markdown_code),
                 context.getColor(R.color.markdown_quote));

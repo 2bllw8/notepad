@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import exe.bbllw8.notepad.main.EditorActivity;
@@ -37,14 +36,12 @@ public final class OpenFileActivity extends Activity {
         finish();
     }
 
-    private void openInNewWindow(@NonNull Uri uri,
-                                 @Nullable String type) {
-        final Intent intent = new Intent(this, EditorActivity.class)
+    private void openInNewWindow(Uri uri, String type) {
+        startActivity(new Intent(this, EditorActivity.class)
                 .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
                         | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                         | Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
-                .setDataAndType(uri, type == null ? TYPE_PLAIN_TEXT : type);
-        startActivity(intent);
+                .setDataAndType(uri, type == null ? TYPE_PLAIN_TEXT : type));
     }
 
 }

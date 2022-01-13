@@ -6,22 +6,18 @@ package exe.bbllw8.notepad.commands.task;
 
 import android.util.Range;
 
-import androidx.annotation.NonNull;
-
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class FindCommandTask implements Callable<Optional<Range<Integer>>> {
-    @NonNull
     private final Pattern pattern;
-    @NonNull
     private final CharSequence content;
     private final int cursor;
 
-    public FindCommandTask(@NonNull String toFind,
-                           @NonNull CharSequence content,
+    public FindCommandTask(String toFind,
+                           CharSequence content,
                            int cursor) {
         this.pattern = Pattern.compile(toFind);
         this.content = content;

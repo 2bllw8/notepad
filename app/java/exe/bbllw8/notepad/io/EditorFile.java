@@ -8,21 +8,17 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
-
 import exe.bbllw8.notepad.config.Config;
 
 public final class EditorFile implements Parcelable {
-    @NonNull
     private final Uri uri;
-    @NonNull
     private final String name;
     private final long size;
     @Config.Eol
     private final String eol;
 
-    public EditorFile(@NonNull Uri uri,
-                      @NonNull String name,
+    public EditorFile(Uri uri,
+                      String name,
                       long size,
                       @Config.Eol String eol) {
         this.uri = uri;
@@ -31,12 +27,10 @@ public final class EditorFile implements Parcelable {
         this.eol = eol;
     }
 
-    @NonNull
     public Uri getUri() {
         return uri;
     }
 
-    @NonNull
     public String getName() {
         return name;
     }
@@ -52,7 +46,7 @@ public final class EditorFile implements Parcelable {
 
     // Parcelable
 
-    protected EditorFile(@NonNull Parcel in) {
+    protected EditorFile(Parcel in) {
         uri = in.readParcelable(Uri.class.getClassLoader());
         name = in.readString();
         size = in.readLong();
@@ -65,7 +59,7 @@ public final class EditorFile implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(@NonNull Parcel dest, int flags) {
+    public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(uri, flags);
         dest.writeString(name);
         dest.writeLong(size);
@@ -73,13 +67,11 @@ public final class EditorFile implements Parcelable {
     }
 
     public static final Creator<EditorFile> CREATOR = new Creator<>() {
-        @NonNull
         @Override
-        public EditorFile createFromParcel(@NonNull Parcel in) {
+        public EditorFile createFromParcel(Parcel in) {
             return new EditorFile(in);
         }
 
-        @NonNull
         @Override
         public EditorFile[] newArray(int size) {
             return new EditorFile[size];

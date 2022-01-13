@@ -4,20 +4,16 @@
  */
 package exe.bbllw8.notepad.commands.task;
 
-import androidx.annotation.NonNull;
-
 import java.util.concurrent.Callable;
 
 public final class DeleteFirstCommandTask implements Callable<String> {
-    @NonNull
     private final String toDelete;
-    @NonNull
     private final String content;
     private final int count;
     private final int cursor;
 
-    public DeleteFirstCommandTask(@NonNull String toDelete,
-                                  @NonNull String content,
+    public DeleteFirstCommandTask(String toDelete,
+                                  String content,
                                   int count,
                                   int cursor) {
         this.toDelete = toDelete;

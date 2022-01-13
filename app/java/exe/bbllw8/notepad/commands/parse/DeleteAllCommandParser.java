@@ -4,8 +4,6 @@
  */
 package exe.bbllw8.notepad.commands.parse;
 
-import androidx.annotation.NonNull;
-
 import java.util.regex.Pattern;
 
 import exe.bbllw8.notepad.commands.EditorCommand;
@@ -14,13 +12,12 @@ public final class DeleteAllCommandParser implements CommandParser<EditorCommand
     private static final Pattern DELETE_PATTERN = Pattern.compile("^d/.+$");
 
     @Override
-    public boolean matches(@NonNull String command) {
+    public boolean matches(String command) {
         return DELETE_PATTERN.matcher(command).find();
     }
 
-    @NonNull
     @Override
-    public EditorCommand.DeleteAll parse(@NonNull String command) {
+    public EditorCommand.DeleteAll parse(String command) {
         final String toDelete = command.substring(2);
         return new EditorCommand.DeleteAll(toDelete);
     }

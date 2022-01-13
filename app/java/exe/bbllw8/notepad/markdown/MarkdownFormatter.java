@@ -17,7 +17,6 @@ import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 
 import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
 
 public final class MarkdownFormatter {
     @ColorInt
@@ -31,8 +30,7 @@ public final class MarkdownFormatter {
         this.quoteColor = quoteColor;
     }
 
-    @NonNull
-    public CharSequence format(@NonNull CharSequence text) {
+    public CharSequence format(CharSequence text) {
         final SpannableStringBuilder sb = new SpannableStringBuilder();
         final int n = text.length();
         int i = 0;
@@ -212,15 +210,15 @@ public final class MarkdownFormatter {
         return sb;
     }
 
-    private static char peek(@NonNull CharSequence s, int max, int index) {
+    private static char peek(CharSequence s, int max, int index) {
         return index < max && index >= 0 ? s.charAt(index) : 0;
     }
 
-    private static int nextEol(@NonNull CharSequence s, int max, int from) {
+    private static int nextEol(CharSequence s, int max, int from) {
         return nextMatch(s, '\n', max, from);
     }
 
-    private static int nextMatch(@NonNull CharSequence s,
+    private static int nextMatch(CharSequence s,
                                  char c,
                                  int max,
                                  int from) {

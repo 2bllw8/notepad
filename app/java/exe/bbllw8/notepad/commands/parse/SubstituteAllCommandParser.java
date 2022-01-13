@@ -4,8 +4,6 @@
  */
 package exe.bbllw8.notepad.commands.parse;
 
-import androidx.annotation.NonNull;
-
 import java.util.regex.Pattern;
 
 import exe.bbllw8.notepad.commands.EditorCommand;
@@ -15,13 +13,12 @@ public final class SubstituteAllCommandParser implements
     private static final Pattern SUBSTITUTE_ALL_PATTERN = Pattern.compile("^s/.+/.+$");
 
     @Override
-    public boolean matches(@NonNull String command) {
+    public boolean matches(String command) {
         return SUBSTITUTE_ALL_PATTERN.matcher(command).find();
     }
 
-    @NonNull
     @Override
-    public EditorCommand.SubstituteAll parse(@NonNull String command) {
+    public EditorCommand.SubstituteAll parse(String command) {
         final int lastDivider = command.lastIndexOf('/');
         final String toFind = command.substring(2, lastDivider);
         final String replaceWith = command.substring(lastDivider + 1);

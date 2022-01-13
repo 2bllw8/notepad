@@ -8,21 +8,19 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
 
-import androidx.annotation.NonNull;
-
 public final class EditorShell {
 
     private EditorShell() {
     }
 
-    public static boolean isEnabled(@NonNull Context context) {
+    public static boolean isEnabled(Context context) {
         final PackageManager packageManager = context.getPackageManager();
         final int status = packageManager.getComponentEnabledSetting(
                 new ComponentName(context, EditorShell.class));
         return PackageManager.COMPONENT_ENABLED_STATE_DISABLED > status;
     }
 
-    public static void setEnabled(@NonNull Context context, boolean enabled) {
+    public static void setEnabled(Context context, boolean enabled) {
         final PackageManager packageManager = context.getPackageManager();
         final int newStatus = enabled
                 ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED

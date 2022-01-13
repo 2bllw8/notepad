@@ -10,23 +10,15 @@ import android.text.Selection;
 import android.text.TextWatcher;
 import android.text.style.UnderlineSpan;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import java.util.Optional;
 import java.util.function.Supplier;
 
 public final class EditorHistory implements TextWatcher {
-
-    @NonNull
     private final Supplier<Editable> editableTextSupplier;
-    @NonNull
     private volatile HistoryStack stack;
-    @Nullable
     private CharSequence contentBefore = "";
     private boolean trackChanges = true;
 
-    public EditorHistory(@NonNull Supplier<Editable> editableTextSupplier,
+    public EditorHistory(Supplier<Editable> editableTextSupplier,
                          int bufferSize) {
         this.editableTextSupplier = editableTextSupplier;
         this.stack = new HistoryStack(bufferSize);
@@ -55,13 +47,13 @@ public final class EditorHistory implements TextWatcher {
         stack.pop().ifPresent(entry -> {
             final Editable editable = editableTextSupplier.get();
 
-            final Optional<CharSequence> before = entry.getBefore();
-            final Optional<CharSequence> after = entry.getAfter();
+            final CharSequence before = entry.getBefore();
+            final CharSequence after = entry.getAfter();
             final int start = entry.getStart();
-            final int end = start + after.map(CharSequence::length).orElse(0);
+            final int end = start + after.length();
 
             trackChanges = false;
-            editable.replace(start, end, before.orElse(""));
+            editable.replace(start, end, before);
             trackChanges = true;
 
             // Remove underline spans (from keyboard suggestions)
@@ -72,7 +64,7 @@ public final class EditorHistory implements TextWatcher {
                 editable.removeSpan(span);
             }
 
-            Selection.setSelection(editable, before.map(x -> start + x.length()).orElse(start));
+            Selection.setSelection(editable, start + before.length());
         });
     }
 
@@ -80,12 +72,11 @@ public final class EditorHistory implements TextWatcher {
         return stack.isNotEmpty();
     }
 
-    @NonNull
     public Parcelable saveInstance() {
         return stack;
     }
 
-    public void restoreInstance(@NonNull Parcelable in) {
+    public void restoreInstance(Parcelable in) {
         stack = (HistoryStack) in;
     }
 }

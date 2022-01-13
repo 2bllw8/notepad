@@ -4,8 +4,6 @@
  */
 package exe.bbllw8.notepad.commands;
 
-import androidx.annotation.NonNull;
-
 import java.util.Optional;
 import java.util.regex.PatternSyntaxException;
 
@@ -32,8 +30,7 @@ public final class EditorCommandParser {
         };
     }
 
-    @NonNull
-    public Optional<EditorCommand> parse(@NonNull String command) {
+    public Optional<EditorCommand> parse(String command) {
         if (!command.isEmpty()) {
             for (final CommandParser<?> parser : COMMAND_PARSERS) {
                 if (parser.matches(command)) {

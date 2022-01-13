@@ -6,23 +6,18 @@ package exe.bbllw8.notepad.main;
 
 import android.graphics.Point;
 
-import androidx.annotation.NonNull;
-
 import java.util.concurrent.Callable;
 
 public final class GetCursorCoordinatesTask implements Callable<Point> {
-
-    @NonNull
     private final String text;
     private final int cursorPosition;
 
-    public GetCursorCoordinatesTask(@NonNull String text,
+    public GetCursorCoordinatesTask(String text,
                                     int cursorPosition) {
         this.text = text;
         this.cursorPosition = cursorPosition;
     }
 
-    @NonNull
     @Override
     public Point call() {
         if (text.isEmpty()) {

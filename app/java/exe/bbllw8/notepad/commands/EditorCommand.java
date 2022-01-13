@@ -4,22 +4,18 @@
  */
 package exe.bbllw8.notepad.commands;
 
-import androidx.annotation.NonNull;
-
 public class EditorCommand {
 
     private EditorCommand() {
     }
 
     public final static class DeleteAll extends EditorCommand {
-        @NonNull
         private final String toDelete;
 
-        public DeleteAll(@NonNull String toDelete) {
+        public DeleteAll(String toDelete) {
             this.toDelete = toDelete;
         }
 
-        @NonNull
         public String getToDelete() {
             return toDelete;
         }
@@ -27,11 +23,10 @@ public class EditorCommand {
 
     public final static class DeleteFirst extends EditorCommand {
         private final int count;
-        @NonNull
         private final String toDelete;
 
         public DeleteFirst(int count,
-                           @NonNull String toDelete) {
+                           String toDelete) {
             this.count = count;
             this.toDelete = toDelete;
         }
@@ -40,67 +35,56 @@ public class EditorCommand {
             return count;
         }
 
-        @NonNull
         public String getToDelete() {
             return toDelete;
         }
     }
 
     public final static class Find extends EditorCommand {
-        @NonNull
         private final String toFind;
 
-        public Find(@NonNull String toFind) {
+        public Find(String toFind) {
             this.toFind = toFind;
         }
 
-        @NonNull
         public String getToFind() {
             return toFind;
         }
     }
 
     public final static class Set extends EditorCommand {
-        @NonNull
         private final String key;
-        @NonNull
         private final String value;
 
-        public Set(@NonNull String key,
-                   @NonNull String value) {
+        public Set(String key,
+                   String value) {
             this.key = key;
             this.value = value;
         }
 
-        @NonNull
         public String getKey() {
             return key;
         }
 
-        @NonNull
         public String getValue() {
             return value;
         }
     }
 
     public final static class SubstituteAll extends EditorCommand {
-        @NonNull
         private final String toFind;
-        @NonNull
         private final String replaceWith;
 
-        public SubstituteAll(@NonNull String toFind,
-                             @NonNull String replaceWith) {
+        public SubstituteAll(String toFind,
+                             String replaceWith) {
             this.toFind = toFind;
             this.replaceWith = replaceWith;
         }
 
-        @NonNull
         public String getToFind() {
             return toFind;
         }
 
-        @NonNull
         public String getReplaceWith() {
             return replaceWith;
         }
@@ -108,14 +92,12 @@ public class EditorCommand {
 
     public final static class SubstituteFirst extends EditorCommand {
         private final int count;
-        @NonNull
         private final String toFind;
-        @NonNull
         private final String replaceWith;
 
         public SubstituteFirst(int count,
-                               @NonNull String toFind,
-                               @NonNull String replaceWith) {
+                               String toFind,
+                               String replaceWith) {
             this.count = count;
             this.toFind = toFind;
             this.replaceWith = replaceWith;
@@ -125,12 +107,10 @@ public class EditorCommand {
             return count;
         }
 
-        @NonNull
         public String getToFind() {
             return toFind;
         }
 
-        @NonNull
         public String getReplaceWith() {
             return replaceWith;
         }

@@ -7,8 +7,6 @@ package exe.bbllw8.notepad.io;
 import android.content.ContentResolver;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,16 +19,13 @@ import exe.bbllw8.either.Try;
 public final class EditorFileWriterTask implements Callable<Try<Integer>> {
     private static final String TAG = "EditorFileWriterTask";
 
-    @NonNull
     private final ContentResolver cr;
-    @NonNull
     private final EditorFile editorFile;
-    @NonNull
     private final String content;
 
-    public EditorFileWriterTask(@NonNull ContentResolver cr,
-                                @NonNull EditorFile editorFile,
-                                @NonNull String content) {
+    public EditorFileWriterTask(ContentResolver cr,
+                                EditorFile editorFile,
+                                String content) {
         this.cr = cr;
         this.editorFile = editorFile;
         this.content = content;

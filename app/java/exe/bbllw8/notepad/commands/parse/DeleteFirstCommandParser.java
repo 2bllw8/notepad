@@ -4,8 +4,6 @@
  */
 package exe.bbllw8.notepad.commands.parse;
 
-import androidx.annotation.NonNull;
-
 import java.util.regex.Pattern;
 
 import exe.bbllw8.notepad.commands.EditorCommand;
@@ -14,13 +12,12 @@ public final class DeleteFirstCommandParser implements CommandParser<EditorComma
     private static final Pattern DELETE_FIRST_PATTERN = Pattern.compile("^\\d+ d/.+$");
 
     @Override
-    public boolean matches(@NonNull String command) {
+    public boolean matches(String command) {
         return DELETE_FIRST_PATTERN.matcher(command).find();
     }
 
-    @NonNull
     @Override
-    public EditorCommand.DeleteFirst parse(@NonNull String command) {
+    public EditorCommand.DeleteFirst parse(String command) {
         final int countDivider = command.indexOf(' ');
         final int count = Integer.parseInt(command.substring(0, countDivider));
         final String toDelete = command.substring(countDivider + 3);

@@ -15,9 +15,8 @@ import androidx.annotation.Nullable;
 import java.util.function.BiConsumer;
 
 public final class TextEditorView extends EditText {
-
-    @Nullable
-    private BiConsumer<Integer, Integer> onCursorChanged = null;
+    private BiConsumer<Integer, Integer> onCursorChanged = (start, end) -> {
+    };
 
     public TextEditorView(@NonNull Context context) {
         super(context);
@@ -45,7 +44,7 @@ public final class TextEditorView extends EditText {
         super.onSelectionChanged(selStart, selEnd);
     }
 
-    public void setOnCursorChanged(@NonNull BiConsumer<Integer, Integer> onCursorChanged) {
+    public void setOnCursorChanged(BiConsumer<Integer, Integer> onCursorChanged) {
         this.onCursorChanged = onCursorChanged;
     }
 }

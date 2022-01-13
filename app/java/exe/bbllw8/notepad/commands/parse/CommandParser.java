@@ -4,14 +4,11 @@
  */
 package exe.bbllw8.notepad.commands.parse;
 
-import androidx.annotation.NonNull;
-
 import exe.bbllw8.notepad.commands.EditorCommand;
 
 public interface CommandParser<T extends EditorCommand> {
 
-    boolean matches(@NonNull String command);
+    boolean matches(String command);
 
-    @NonNull
-    T parse(@NonNull String command);
+    T parse(String command);
 }

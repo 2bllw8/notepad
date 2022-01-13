@@ -9,7 +9,6 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.MainThread;
-import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
 import java.util.ArrayList;
@@ -31,8 +30,8 @@ public final class TaskExecutor {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final List<Future<?>> execFutures = new ArrayList<>(4);
 
-    public synchronized <T> void runTask(@NonNull @WorkerThread Callable<T> callable,
-                                         @NonNull @MainThread Consumer<T> consumer) {
+    public synchronized <T> void runTask(@WorkerThread Callable<T> callable,
+                                         @MainThread Consumer<T> consumer) {
         final Future<T> future = executor.submit(callable);
         execFutures.add(future);
         try {
@@ -49,9 +48,9 @@ public final class TaskExecutor {
         }
     }
 
-    public synchronized <T> void runTask(@NonNull @WorkerThread Callable<Optional<T>> callable,
-                                         @NonNull @MainThread Consumer<T> ifPresent,
-                                         @NonNull @MainThread Runnable ifNotPresent) {
+    public synchronized <T> void runTask(@WorkerThread Callable<Optional<T>> callable,
+                                         @MainThread Consumer<T> ifPresent,
+                                         @MainThread Runnable ifNotPresent) {
         runTask(callable, opt -> {
             if (opt.isPresent()) {
                 ifPresent.accept(opt.get());
@@ -61,7 +60,7 @@ public final class TaskExecutor {
         });
     }
 
-    public synchronized void submit(@NonNull @WorkerThread Runnable runnable) {
+    public synchronized void submit(@WorkerThread Runnable runnable) {
         // Since this future holds no "outcome", we can safely keep it in the
         // execFutures list until the executor is terminated
         execFutures.add(executor.submit(runnable));

@@ -12,8 +12,6 @@ import androidx.annotation.NonNull;
 import java.util.Optional;
 
 public final class HistoryStack implements Parcelable {
-
-    @NonNull
     private final HistoryEntry[] stack;
     private final int capacity;
     private int i;
@@ -25,7 +23,7 @@ public final class HistoryStack implements Parcelable {
         this.i = -1;
     }
 
-    public void push(@NonNull HistoryEntry entry) {
+    public void push(HistoryEntry entry) {
         // By allowing the size to grow beyond the capacity
         // without constraints, we can ensure that if the user
         // makes more than $(capacity + 1) edits and then
@@ -36,7 +34,6 @@ public final class HistoryStack implements Parcelable {
         stack[i] = entry;
     }
 
-    @NonNull
     public Optional<HistoryEntry> pop() {
         if (size == 0) {
             return Optional.empty();
@@ -59,7 +56,7 @@ public final class HistoryStack implements Parcelable {
         return size > 0;
     }
 
-    protected HistoryStack(@NonNull Parcel in) {
+    protected HistoryStack(Parcel in) {
         stack = in.createTypedArray(HistoryEntry.CREATOR);
         capacity = in.readInt();
         i = in.readInt();

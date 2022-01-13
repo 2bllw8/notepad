@@ -4,22 +4,17 @@
  */
 package exe.bbllw8.notepad.commands.task;
 
-import androidx.annotation.NonNull;
-
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 
 public final class SubstituteAllCommandTask implements Callable<String> {
-    @NonNull
     private final String toFind;
-    @NonNull
     private final String replacement;
-    @NonNull
     private final String content;
 
-    public SubstituteAllCommandTask(@NonNull String toFind,
-                                    @NonNull String replacement,
-                                    @NonNull String content) {
+    public SubstituteAllCommandTask(String toFind,
+                                    String replacement,
+                                    String content) {
         this.toFind = toFind;
         this.replacement = replacement;
         this.content = content;

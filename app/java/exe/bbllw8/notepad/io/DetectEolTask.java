@@ -4,21 +4,17 @@
  */
 package exe.bbllw8.notepad.io;
 
-import androidx.annotation.NonNull;
-
 import java.util.concurrent.Callable;
 
 import exe.bbllw8.notepad.config.Config;
 
 public final class DetectEolTask implements Callable<String> {
-    @NonNull
     private final String content;
 
-    public DetectEolTask(@NonNull String content) {
+    public DetectEolTask(String content) {
         this.content = content;
     }
 
-    @NonNull
     @Override
     public String call() throws Exception {
         int i = 0;
