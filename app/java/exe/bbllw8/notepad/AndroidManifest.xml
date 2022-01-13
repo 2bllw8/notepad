@@ -6,6 +6,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="exe.bbllw8.notepad">
 
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
     <application
         android:allowBackup="false"
         android:allowClearUserData="false"
