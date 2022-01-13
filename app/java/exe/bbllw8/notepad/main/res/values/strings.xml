@@ -13,6 +13,7 @@
     <string name="error_open">Failed to open file</string>
     <string name="error_read_generic">Failed to read \'%1$s\'</string>
     <string name="error_read_size">Failed to read \'%1$s\': the file is too big (%2$.2f / %3$.2f MB)</string>
+    <string name="error_substitution">Invalid pattern</string>
 
     <string name="summary_loading">Loading…</string>
     <string name="summary_info">Ln %1$d, Col %2$d</string>
@@ -42,7 +43,6 @@
     <string name="command_hint">Type a command…</string>
     <string name="command_unknown">Error: unknown or badly–formatted command</string>
     <string name="command_find_none">Find: no match</string>
-    <string name="command_set_success">Applied</string>
 
     <string name="save_quit_ask">Quit without saving changes to %1$s?</string>
     <string name="save_in_progress">Saving \'%1$s\'…</string>

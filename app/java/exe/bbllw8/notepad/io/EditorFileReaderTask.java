@@ -5,9 +5,6 @@
 package exe.bbllw8.notepad.io;
 
 import android.content.ContentResolver;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,8 +14,6 @@ import java.util.concurrent.Callable;
 import exe.bbllw8.either.Try;
 
 public final class EditorFileReaderTask implements Callable<Try<String>> {
-    private static final String TAG = "EditorFileReaderTask";
-
     private final ContentResolver cr;
     private final EditorFile editorFile;
     private final int maxSize;
@@ -37,7 +32,6 @@ public final class EditorFileReaderTask implements Callable<Try<String>> {
 
         return Try.from(() -> {
             if (fileSize > maxSize) {
-                Log.e(TAG, "The file is too big: " + fileSize + '/' + maxSize);
                 throw new EditorFileTooLargeException(fileSize, maxSize);
             } else {
                 final StringBuilder sb = new StringBuilder();
@@ -50,7 +44,6 @@ public final class EditorFileReaderTask implements Callable<Try<String>> {
                     }
                     return sb.toString();
                 } catch (IOException e) {
-                    Log.e(TAG, "Failed to read the file contents", e);
                     throw new UncheckedIOException(e);
                 }
             }

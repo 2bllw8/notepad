@@ -7,7 +7,9 @@ package exe.bbllw8.notepad.commands;
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 
-public final class SubstituteCommandTask implements Callable<CharSequence> {
+import exe.bbllw8.either.Try;
+
+public final class SubstituteCommandTask implements Callable<Try<String>> {
     public static final int ALL = -1;
 
     private final String toFind;
@@ -29,20 +31,20 @@ public final class SubstituteCommandTask implements Callable<CharSequence> {
     }
 
     @Override
-    public String call() {
-        final Pattern pattern = Pattern.compile(toFind);
-        if (count == ALL) {
-            return pattern.matcher(content).replaceAll(replacement);
-        } else {
-            return content.substring(0, cursor) + substitute(pattern,
-                    content.substring(cursor),
-                    count);
-        }
+    public Try<String> call() {
+        return Try.from(() -> {
+            final Pattern pattern = Pattern.compile(toFind);
+            if (count == ALL) {
+                return pattern.matcher(content).replaceAll(replacement);
+            } else {
+                return content.substring(0, cursor) + substitute(pattern,
+                        content.substring(cursor),
+                        count);
+            }
+        });
     }
 
-    private String substitute(Pattern pattern,
-                              String content,
-                              int count) {
+    private String substitute(Pattern pattern, String content, int count) {
         if (count == 0) {
             return content;
         } else {

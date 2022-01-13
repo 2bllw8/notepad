@@ -19,6 +19,7 @@ import android.text.PrecomputedText;
 import android.text.TextWatcher;
 import android.text.style.CharacterStyle;
 import android.text.style.MetricAffectingSpan;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -68,6 +69,7 @@ public final class EditorActivity extends Activity implements
         EditorCommandsExecutor,
         EditorMenuActions,
         TextWatcher {
+    private static final String TAG = "EditorActivity";
     private static final String KEY_EDITOR_FILE = "file";
     private static final String KEY_HISTORY_STATE = "history";
     private static final String TYPE_PLAIN_TEXT = "text/plain";
@@ -375,7 +377,10 @@ public final class EditorActivity extends Activity implements
                     if (tryResult.isSuccess()) {
                         tryResult.forEach(this::readFile);
                     } else {
-                        showOpenErrorMessage();
+                        tryResult.failed().forEach(t -> {
+                            Log.e(TAG, "Failed to load file", t);
+                            showOpenErrorMessage();
+                        });
                     }
                 });
     }
@@ -387,7 +392,10 @@ public final class EditorActivity extends Activity implements
                     if (tryResult.isSuccess()) {
                         tryResult.forEach(content -> detectEolAndSetContent(editorFile, content));
                     } else {
-                        tryResult.failed().forEach(t -> showReadErrorMessage(editorFile, t));
+                        tryResult.failed().forEach(t -> {
+                            Log.e(TAG, "Failed to read the file contents", t);
+                            showReadErrorMessage(editorFile, t);
+                        });
                     }
                 });
     }
@@ -410,7 +418,10 @@ public final class EditorActivity extends Activity implements
                     if (tryResult.isSuccess()) {
                         tryResult.forEach(editorFile -> saveNewFile(editorFile, quitWhenSaved));
                     } else {
-                        tryResult.failed().forEach(t -> showOpenErrorMessage());
+                        tryResult.failed().forEach(t -> {
+                            Log.e(TAG, "Failed to set destination file", t);
+                            showOpenErrorMessage();
+                        });
                     }
                 });
     }
@@ -519,10 +530,12 @@ public final class EditorActivity extends Activity implements
                         }
                         showSavedMessage(quitWhenSaved);
                     } else {
-                        showWriteErrorMessage(editorFile);
+                        tryResult.failed().forEach(t -> {
+                            Log.e(TAG, "Failed to write file content", t);
+                            showWriteErrorMessage(editorFile);
+                        });
                     }
                 });
-
     }
 
     /* UI */
@@ -660,7 +673,17 @@ public final class EditorActivity extends Activity implements
 
     @Override
     public void runSubstituteCommand(SubstituteCommandTask substituteTask) {
-        taskExecutor.runTask(substituteTask, textEditorView::setText);
+        taskExecutor.runTask(substituteTask,
+                tryResult -> {
+                    if (tryResult.isSuccess()) {
+                        tryResult.forEach(textEditorView::setText);
+                    } else {
+                        tryResult.failed().forEach(t -> {
+                            Log.e(TAG, "Failed to run substitution", t);
+                            showTmpMessage(R.string.error_substitution);
+                        });
+                    }
+                });
     }
 
     /* Dirty */
@@ -699,7 +722,6 @@ public final class EditorActivity extends Activity implements
                 .orElseGet(() -> getString(R.string.title_generic));
 
         new AlertDialog.Builder(this, R.style.DialogTheme)
-                .setTitle(fileName)
                 .setMessage(getString(R.string.save_quit_ask, fileName))
                 .setPositiveButton(R.string.action_save_and_quit,
                         (d, which) -> {

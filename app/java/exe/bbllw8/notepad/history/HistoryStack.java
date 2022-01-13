@@ -7,8 +7,6 @@ package exe.bbllw8.notepad.history;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
-
 import java.util.Optional;
 
 public final class HistoryStack implements Parcelable {

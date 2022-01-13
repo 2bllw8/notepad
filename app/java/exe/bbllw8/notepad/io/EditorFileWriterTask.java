@@ -5,7 +5,6 @@
 package exe.bbllw8.notepad.io;
 
 import android.content.ContentResolver;
-import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -17,8 +16,6 @@ import java.util.concurrent.Callable;
 import exe.bbllw8.either.Try;
 
 public final class EditorFileWriterTask implements Callable<Try<Integer>> {
-    private static final String TAG = "EditorFileWriterTask";
-
     private final ContentResolver cr;
     private final EditorFile editorFile;
     private final String content;
@@ -50,7 +47,6 @@ public final class EditorFileWriterTask implements Callable<Try<Integer>> {
 
                 return written;
             } catch (IOException e) {
-                Log.e(TAG, "Failed to write file content", e);
                 throw new UncheckedIOException(e);
             }
         });
