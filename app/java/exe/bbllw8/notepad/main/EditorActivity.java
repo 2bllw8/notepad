@@ -28,7 +28,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,6 +84,7 @@ public final class EditorActivity extends Activity implements
     private boolean alwaysAllowSave = false;
 
     private ActionBar actionBar;
+    private RelativeLayout rootView;
     private View loadView;
     private TextView summaryView;
     private TextEditorView textEditorView;
@@ -102,6 +106,7 @@ public final class EditorActivity extends Activity implements
         // Initialize view
         setContentView(R.layout.activity_main);
         actionBar = getActionBar();
+        rootView = findViewById(R.id.editorRoot);
         loadView = findViewById(R.id.editorProgress);
         summaryView = findViewById(R.id.editorSummary);
         textEditorView = findViewById(R.id.editorContent);
@@ -207,6 +212,7 @@ public final class EditorActivity extends Activity implements
                         x.onAutoPairChanged(editorConfig.getAutoPairEnabled());
                         x.onCommandBarVisibilityChanged(editorConfig.getShowCommandBar());
                         x.onShellVisibilityChanged(EditorShell.isEnabled(this));
+                        x.onWrapTextChanged(editorConfig.getWrapText());
                         x.onEolChanged(editorConfig.getEol());
                         // If always dirty (snippet / new blank file) always allow to save
                         x.setSaveAllowed(alwaysAllowSave);
@@ -361,6 +367,11 @@ public final class EditorActivity extends Activity implements
     }
 
     @Override
+    public void setWrapText(boolean wrap) {
+        editorConfig.setWrapText(wrap);
+    }
+
+    @Override
     public void setShellShown(boolean shown) {
         EditorShell.setEnabled(this, shown);
         editorMenu.ifPresent(x -> x.onShellVisibilityChanged(shown));
@@ -436,7 +447,6 @@ public final class EditorActivity extends Activity implements
         loadView.setVisibility(View.GONE);
         textEditorView.setVisibility(View.VISIBLE);
 
-        loadConfig();
         setDocumentTitle(editorFile.getName());
         setContentInView(content);
     }
@@ -560,6 +570,7 @@ public final class EditorActivity extends Activity implements
         onTextStyleChanged(editorConfig.getTextStyle());
         onAutoPairEnabledChanged(editorConfig.getAutoPairEnabled());
         onShowCommandBarChanged(editorConfig.getShowCommandBar());
+        onWrapTextChanged(editorConfig.getWrapText());
     }
 
     @Override
@@ -630,6 +641,46 @@ public final class EditorActivity extends Activity implements
         // The text in the view didn't change, but if we
         // save the file, the output will be different
         setDirty();
+    }
+
+    @Override
+    public void onWrapTextChanged(boolean wrap) {
+        final View verticalContent = findViewById(R.id.editorVerticalScroll);
+        final ViewGroup currentContainer;
+        {
+            // The containers must have different ids for instance state restoration
+            final ViewGroup wrapContainer = findViewById(R.id.editorWrapContainer);
+            currentContainer = wrapContainer == null
+                    ? findViewById(R.id.editorNoWrapContainer)
+                    : wrapContainer;
+        }
+
+        currentContainer.removeView(verticalContent);
+        final ViewGroup newContainer;
+        if (wrap) {
+            newContainer = new FrameLayout(rootView.getContext(), null);
+            newContainer.setId(R.id.editorWrapContainer);
+            newContainer.addView(verticalContent,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+        } else {
+            newContainer = new HorizontalScrollView(rootView.getContext(), null);
+            ((HorizontalScrollView) newContainer).setFillViewport(true);
+            newContainer.setId(R.id.editorNoWrapContainer);
+            newContainer.addView(verticalContent,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+        }
+
+        final RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+        params.addRule(RelativeLayout.ABOVE, R.id.editorFooter);
+
+        rootView.removeView(currentContainer);
+        rootView.addView(newContainer, params);
+
+        editorMenu.ifPresent(x -> x.onWrapTextChanged(wrap));
     }
 
     /* Commands */

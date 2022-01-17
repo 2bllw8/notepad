@@ -1,0 +1,8 @@
+<!--
+  ~ Copyright (c) 2022 2bllw8
+  ~ SPDX-License-Identifier: GPL-3.0-only
+  -->
+<resources>
+    <item name="editorWrapContainer" type="id" />
+    <item name="editorNoWrapContainer" type="id" />
+</resources>

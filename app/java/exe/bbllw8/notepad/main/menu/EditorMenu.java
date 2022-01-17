@@ -33,6 +33,7 @@ public final class EditorMenu {
 
     private final MenuItem autoPairMenuItem;
     private final MenuItem showCommandBarMenuItem;
+    private final MenuItem wrapTextMenuItem;
     private final MenuItem showShellMenuItem;
 
     public EditorMenu(EditorMenuActions actions,
@@ -58,6 +59,7 @@ public final class EditorMenu {
 
         autoPairMenuItem = menu.findItem(R.id.menu_option_auto_pair);
         showCommandBarMenuItem = menu.findItem(R.id.menu_option_command_bar_show);
+        wrapTextMenuItem = menu.findItem(R.id.menu_option_wrap_text);
         showShellMenuItem = menu.findItem(R.id.menu_option_shell_show);
     }
 
@@ -113,6 +115,9 @@ public final class EditorMenu {
         } else if (id == R.id.menu_option_command_bar_show) {
             actions.setCommandBarShown(!isChecked);
             return true;
+        } else if (id == R.id.menu_option_wrap_text) {
+            actions.setWrapText(!isChecked);
+            return true;
         } else if (id == R.id.menu_option_shell_show) {
             actions.setShellShown(!isChecked);
             return true;
@@ -159,6 +164,10 @@ public final class EditorMenu {
 
     public void onShellVisibilityChanged(boolean isVisible) {
         showShellMenuItem.setChecked(isVisible);
+    }
+
+    public void onWrapTextChanged(boolean isWrapped) {
+        wrapTextMenuItem.setChecked(isWrapped);
     }
 
     public void onEolChanged(@Config.Eol String eol) {

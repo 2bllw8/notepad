@@ -13,6 +13,7 @@ the device storage or other apps.
 - Undo actions
 - Automatically close brackets and quotes: `' '`, `" "`, `( )`, `[ ]`, `{ }`
 - Support different EOL
+- Text wrapping
 - Commands
   - `/my text`: find next occurrence of _my text_ from the current cursor position
   - `d/my text`: delete all occurrences of _my text_

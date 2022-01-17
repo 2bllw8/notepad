@@ -15,4 +15,6 @@ public interface EditorConfigListener {
     void onShowCommandBarChanged(boolean show);
 
     void onEolChanged(@Config.Eol String newEol);
+
+    void onWrapTextChanged(boolean wrap);
 }

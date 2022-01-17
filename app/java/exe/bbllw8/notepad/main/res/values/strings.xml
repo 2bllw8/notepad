@@ -37,6 +37,7 @@
     <string name="menu_option">Options</string>
     <string name="menu_option_auto_pair">Auto pair</string>
     <string name="menu_option_command_bar_show">Command field</string>
+    <string name="menu_option_wrap_text">Wrap text</string>
     <string name="menu_option_shell_show">Show app icon</string>
     <string name="menu_help">Help</string>
 

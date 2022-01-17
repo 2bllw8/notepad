@@ -31,4 +31,6 @@ public interface EditorMenuActions {
     void setShellShown(boolean shown);
 
     void setEol(@Config.Eol String eol);
+
+    void setWrapText(boolean wrap);
 }

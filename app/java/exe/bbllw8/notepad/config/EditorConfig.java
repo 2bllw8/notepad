@@ -14,6 +14,7 @@ public final class EditorConfig {
     private static final String KEY_STYLE = "text_style";
     private static final String KEY_AUTO_PAIR = "auto_pair";
     private static final String KEY_SHOW_COMMAND_BAR = "show_command_bar";
+    private static final String KEY_WRAP_TEXT = "wrap_text";
 
     private final EditorConfigListener configListener;
     private final SharedPreferences preferences;
@@ -84,6 +85,17 @@ public final class EditorConfig {
     public void setEol(@Config.Eol String eol) {
         this.eol = eol;
         configListener.onEolChanged(eol);
+    }
+
+    public boolean getWrapText() {
+        return preferences.getBoolean(KEY_WRAP_TEXT, Config.DEFAULT_WRAP_TEXT);
+    }
+
+    public void setWrapText(boolean wrap) {
+        preferences.edit()
+                .putBoolean(KEY_WRAP_TEXT, wrap)
+                .apply();
+        configListener.onWrapTextChanged(wrap);
     }
 
     public void increaseTextSize() {
