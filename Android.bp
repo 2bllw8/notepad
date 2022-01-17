@@ -23,6 +23,9 @@ android_app {
         "app/java/exe/bbllw8/notepad/markdown/res",
         "app/java/exe/bbllw8/notepad/shell/res",
     ],
+    aaptflags: [
+        "--auto-add-overlay",
+    ],
     optimize: {
         proguard_flags_files: [
             "app/proguard-rules.pro",
