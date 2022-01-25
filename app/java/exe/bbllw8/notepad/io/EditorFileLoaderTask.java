@@ -40,8 +40,8 @@ public final class EditorFileLoaderTask implements Callable<Try<EditorFile>> {
 
     @Override
     public Try<EditorFile> call() {
-        try (final Cursor infoCursor = cr.query(uri, FILE_INFO_QUERY, null, null, null)) {
-            return Try.from(() -> {
+        return Try.from(() -> {
+            try (final Cursor infoCursor = cr.query(uri, FILE_INFO_QUERY, null, null, null)) {
                 if (infoCursor.moveToFirst()) {
                     final String name = infoCursor.getString(0);
                     final long size = infoCursor.getLong(1);
@@ -49,7 +49,7 @@ public final class EditorFileLoaderTask implements Callable<Try<EditorFile>> {
                 } else {
                     throw new UncheckedIOException(new FileNotFoundException(uri.toString()));
                 }
-            });
-        }
+            }
+        });
     }
 }

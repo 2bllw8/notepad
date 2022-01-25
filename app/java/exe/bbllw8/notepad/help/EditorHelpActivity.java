@@ -33,8 +33,9 @@ public final class EditorHelpActivity extends Activity {
         }
 
         taskExecutor.runTask(new LoadHelpContentTextTask(this),
-                contentView::setText,
-                () -> contentView.setText(R.string.help_error));
+                tryResult -> tryResult.forEach(
+                        contentView::setText,
+                        err -> contentView.setText(R.string.help_error)));
     }
 
     @Override
