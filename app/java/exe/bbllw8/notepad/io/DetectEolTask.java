@@ -16,7 +16,7 @@ public final class DetectEolTask implements Callable<String> {
     }
 
     @Override
-    public String call() throws Exception {
+    public String call() {
         int i = 0;
         final int n = content.length();
         while (i < n) {
