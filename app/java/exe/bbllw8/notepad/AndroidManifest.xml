@@ -11,12 +11,15 @@
         android:required="false" />
 
     <application
-        android:allowBackup="false"
+        android:allowBackup="true"
         android:allowClearUserData="false"
         android:appCategory="productivity"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/label_app"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        tools:targetApi="s">
 
         <!-- Help -->
 
