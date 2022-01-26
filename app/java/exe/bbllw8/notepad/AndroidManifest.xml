@@ -30,7 +30,6 @@
         <activity
             android:name=".main.EditorActivity"
             android:exported="true"
-            android:label="@string/label_app"
             android:theme="@style/AppTheme">
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.EDIT" />
