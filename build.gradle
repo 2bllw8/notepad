@@ -38,7 +38,10 @@ ext {
     sourceCompatibilityVersion = JavaVersion.VERSION_11
     targetCompatibilityVersion = JavaVersion.VERSION_11
 
-    keyStoreFile = file(localProps.getProperty('androidStoreFile'))
+    keyStoreFile = localProps.getProperty('androidStoreFile')
+    if (keyStoreFile != null && keyStoreFile != '') {
+        keyStoreFile = file(keyStoreFile)
+    }
     keyStorePassword = localProps.getProperty('androidStorePassword')
     keyAlias = localProps.getProperty('androidKeyAlias')
     keyPassword = localProps.getProperty('androidKeyPassword')

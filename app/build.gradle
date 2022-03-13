@@ -68,7 +68,7 @@ android {
     }
 
     signingConfigs {
-        if (rootProject.ext.keyStoreFile.exists()) {
+        if (rootProject.ext.keyStoreFile != null && rootProject.ext.keyStoreFile.exists()) {
             notepad {
                 storeFile rootProject.ext.keyStoreFile
                 storePassword rootProject.ext.keyStorePassword
@@ -79,16 +79,19 @@ android {
     }
 
     buildTypes {
+        def useNotepadConfig = rootProject.ext.keyStoreFile != null
+                && rootProject.ext.keyStoreFile.exists()
+
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            if (rootProject.ext.keyStoreFile.exists()) {
+            if (useNotepadConfig) {
                 signingConfig = signingConfigs.named('notepad').get()
             }
         }
         debug {
-            if (rootProject.ext.keyStoreFile.exists()) {
+            if (useNotepadConfig) {
                 signingConfig = signingConfigs.named('notepad').get()
             }
         }
