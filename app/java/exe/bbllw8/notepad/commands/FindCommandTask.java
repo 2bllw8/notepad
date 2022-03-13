@@ -30,7 +30,8 @@ public final class FindCommandTask implements Callable<Optional<Range<Integer>>>
     @Override
     public Optional<Range<Integer>> call() {
         // Pattern may throw an exception if the user input
-        // is not valid, wrap in a Try and then convert to Optional
+        // is not a valid regular expression, wrap in a Try
+        // and then convert to Optional
         return Try.from(() -> {
             final Matcher matcher = pattern.matcher(content);
             if (matcher.find(cursor)) {

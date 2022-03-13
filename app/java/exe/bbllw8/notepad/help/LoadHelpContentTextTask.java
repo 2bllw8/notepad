@@ -6,11 +6,8 @@ package exe.bbllw8.notepad.help;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.util.Log;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.util.concurrent.Callable;
 
 import exe.bbllw8.either.Try;
@@ -18,7 +15,6 @@ import exe.bbllw8.notepad.R;
 import exe.bbllw8.notepad.markdown.MarkdownFormatter;
 
 final class LoadHelpContentTextTask implements Callable<Try<CharSequence>> {
-    private static final String TAG = "LoadHelpTextTask";
     private final Resources resources;
     private final MarkdownFormatter formatter;
 
@@ -42,9 +38,6 @@ final class LoadHelpContentTextTask implements Callable<Try<CharSequence>> {
 
                 final CharSequence original = sb.toString();
                 return formatter.format(original);
-            } catch (IOException e) {
-                Log.e(TAG, "Failed to read file", e);
-                throw new UncheckedIOException(e);
             }
         });
     }

@@ -46,8 +46,6 @@ public final class EditorFileWriterTask implements Callable<Try<Integer>> {
                 }
 
                 return written;
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
             }
         });
     }

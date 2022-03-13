@@ -4,7 +4,9 @@
  */
 package exe.bbllw8.notepad.io;
 
-public final class EditorFileTooLargeException extends RuntimeException {
+import java.io.IOException;
+
+public final class EditorFileTooLargeException extends IOException {
     private final long fileSize;
     private final long maxSize;
 

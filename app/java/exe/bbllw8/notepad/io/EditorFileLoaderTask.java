@@ -47,7 +47,7 @@ public final class EditorFileLoaderTask implements Callable<Try<EditorFile>> {
                     final long size = infoCursor.getLong(1);
                     return new EditorFile(uri, name, size, eol);
                 } else {
-                    throw new UncheckedIOException(new FileNotFoundException(uri.toString()));
+                    throw new FileNotFoundException(uri.toString());
                 }
             }
         });

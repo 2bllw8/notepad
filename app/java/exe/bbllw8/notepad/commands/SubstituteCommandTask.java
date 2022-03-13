@@ -32,6 +32,8 @@ public final class SubstituteCommandTask implements Callable<Try<String>> {
 
     @Override
     public Try<String> call() {
+        // Pattern may throw an exception if the user input
+        // is not a valid regular expression
         return Try.from(() -> {
             final Pattern pattern = Pattern.compile(toFind);
             if (count == ALL) {

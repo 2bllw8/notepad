@@ -43,8 +43,6 @@ public final class EditorFileReaderTask implements Callable<Try<String>> {
                         read = reader.read(buffer, 0, 4096);
                     }
                     return sb.toString();
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
                 }
             }
         });
