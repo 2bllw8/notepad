@@ -8,7 +8,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.1.2'
+        classpath 'com.android.tools.build:gradle:8.8.0'
     }
 }
 
@@ -19,8 +19,8 @@ allprojects {
     }
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+tasks.register('clean', Delete) {
+    delete rootProject.layout.buildDirectory
 }
 
 final Properties localProps = new Properties()
@@ -35,8 +35,10 @@ ext {
     versionCode = 4
     versionName = '2.2'
 
-    sourceCompatibilityVersion = JavaVersion.VERSION_11
-    targetCompatibilityVersion = JavaVersion.VERSION_11
+    namespace = "exe.bbllw8.notepad"
+
+    sourceCompatibilityVersion = JavaVersion.VERSION_17
+    targetCompatibilityVersion = JavaVersion.VERSION_17
 
     keyStoreFile = localProps.getProperty('androidStoreFile')
     if (keyStoreFile != null && keyStoreFile != '') {
