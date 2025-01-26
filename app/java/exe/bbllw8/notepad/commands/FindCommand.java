@@ -4,14 +4,5 @@
  */
 package exe.bbllw8.notepad.commands;
 
-public final class FindCommand {
-    private final String toFind;
-
-    public FindCommand(String toFind) {
-        this.toFind = toFind;
-    }
-
-    public String getToFind() {
-        return toFind;
-    }
+public record FindCommand(String toFind) {
 }

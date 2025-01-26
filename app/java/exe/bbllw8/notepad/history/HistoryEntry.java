@@ -20,7 +20,7 @@ public final class HistoryEntry implements Parcelable {
         this.start = start;
     }
 
-    protected HistoryEntry(Parcel in) {
+    HistoryEntry(Parcel in) {
         before = in.readString();
         after = in.readString();
         start = in.readInt();

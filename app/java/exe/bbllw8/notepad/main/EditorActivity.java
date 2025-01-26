@@ -27,6 +27,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
@@ -43,6 +46,8 @@ import androidx.annotation.StringRes;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import exe.bbllw8.notepad.R;
 import exe.bbllw8.notepad.auto.AutoPair;
@@ -65,6 +70,7 @@ import exe.bbllw8.notepad.main.menu.EditorMenuActions;
 import exe.bbllw8.notepad.shell.EditorShell;
 import exe.bbllw8.notepad.shell.OpenFileActivity;
 import exe.bbllw8.notepad.task.TaskExecutor;
+import exe.bbllw8.notepad.ui.UiUtils;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public final class EditorActivity extends Activity implements
@@ -113,6 +119,8 @@ public final class EditorActivity extends Activity implements
         commandBar = findViewById(R.id.editorCommandBar);
         commandField = findViewById(R.id.editorCommandField);
         final ImageView commandRunButton = findViewById(R.id.editorCommandRun);
+
+        enableEdgeToEdge();
 
         setCursorCoordinatesSummary(1, 1);
         textEditorView.setOnCursorChanged(this::setCursorCoordinatesSummary);
@@ -201,25 +209,20 @@ public final class EditorActivity extends Activity implements
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         final MenuInflater menuInflater = getMenuInflater();
-        if (menuInflater == null) {
-            return super.onCreateOptionsMenu(menu);
-        } else {
-            editorMenu = Optional.of(new EditorMenu(this, menu, menuInflater))
-                    .map(x -> {
-                        // Load settings
-                        x.onFontSizeChanged(editorConfig.getTextSize());
-                        x.onFontStyleChanged(editorConfig.getTextStyle());
-                        x.onAutoPairChanged(editorConfig.getAutoPairEnabled());
-                        x.onCommandBarVisibilityChanged(editorConfig.getShowCommandBar());
-                        x.onShellVisibilityChanged(EditorShell.isEnabled(this));
-                        x.onWrapTextChanged(editorConfig.getWrapText());
-                        x.onEolChanged(editorConfig.getEol());
-                        // If always dirty (snippet / new blank file) always allow to save
-                        x.setSaveAllowed(alwaysAllowSave);
-                        return x;
-                    });
-            return true;
-        }
+        editorMenu = Optional.of(new EditorMenu(this, menu, menuInflater)).map(x -> {
+            // Load settings
+            x.onFontSizeChanged(editorConfig.getTextSize());
+            x.onFontStyleChanged(editorConfig.getTextStyle());
+            x.onAutoPairChanged(editorConfig.getAutoPairEnabled());
+            x.onCommandBarVisibilityChanged(editorConfig.getShowCommandBar());
+            x.onShellVisibilityChanged(EditorShell.isEnabled(this));
+            x.onWrapTextChanged(editorConfig.getWrapText());
+            x.onEolChanged(editorConfig.getEol());
+            // If always dirty (snippet / new blank file) always allow to save
+            x.setSaveAllowed(alwaysAllowSave);
+            return x;
+        });
+        return true;
     }
 
     @Override
@@ -261,25 +264,28 @@ public final class EditorActivity extends Activity implements
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (event.isCtrlPressed()) {
-            switch (keyCode) {
-                case KeyEvent.KEYCODE_Q:
+            return switch (keyCode) {
+                case KeyEvent.KEYCODE_Q -> {
                     onBackPressed();
-                    return true;
-                case KeyEvent.KEYCODE_PLUS:
+                    yield true;
+                }
+                case KeyEvent.KEYCODE_PLUS -> {
                     editorConfig.increaseTextSize();
-                    return true;
-                case KeyEvent.KEYCODE_EQUALS:
+                    yield true;
+                }
+                case KeyEvent.KEYCODE_EQUALS -> {
                     if (event.isShiftPressed()) {
                         // US keyboard '+' is 'Shift ='
                         editorConfig.increaseTextSize();
                     }
-                    return true;
-                case KeyEvent.KEYCODE_MINUS:
+                    yield true;
+                }
+                case KeyEvent.KEYCODE_MINUS -> {
                     editorConfig.decreaseTextSize();
-                    return true;
-                default:
-                    return super.onKeyUp(keyCode, event);
-            }
+                    yield true;
+                }
+                default -> super.onKeyUp(keyCode, event);
+            };
         } else {
             return super.onKeyUp(keyCode, event);
         }
@@ -575,19 +581,11 @@ public final class EditorActivity extends Activity implements
 
     @Override
     public void onTextSizeChanged(@Config.Size int newSize) {
-        final int newTextSizeRes;
-        switch (newSize) {
-            case Config.Size.SMALL:
-                newTextSizeRes = R.dimen.font_size_small;
-                break;
-            case Config.Size.LARGE:
-                newTextSizeRes = R.dimen.font_size_large;
-                break;
-            case Config.Size.MEDIUM:
-            default:
-                newTextSizeRes = R.dimen.font_size_medium;
-                break;
-        }
+        final int newTextSizeRes = switch (newSize) {
+            case Config.Size.SMALL -> R.dimen.font_size_small;
+            case Config.Size.LARGE -> R.dimen.font_size_large;
+            default -> R.dimen.font_size_medium;
+        };
         textEditorView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimensionPixelSize(newTextSizeRes));
         editorMenu.ifPresent(x -> x.onFontSizeChanged(newSize));
@@ -595,19 +593,11 @@ public final class EditorActivity extends Activity implements
 
     @Override
     public void onTextStyleChanged(@Config.Style int newStyle) {
-        final Typeface newTypeface;
-        switch (newStyle) {
-            case Config.Style.SANS:
-                newTypeface = Typeface.SANS_SERIF;
-                break;
-            case Config.Style.SERIF:
-                newTypeface = Typeface.SERIF;
-                break;
-            case Config.Style.MONO:
-            default:
-                newTypeface = Typeface.MONOSPACE;
-                break;
-        }
+        final Typeface newTypeface = switch (newStyle) {
+            case Config.Style.SANS -> Typeface.SANS_SERIF;
+            case Config.Style.SERIF -> Typeface.SERIF;
+            default -> Typeface.MONOSPACE;
+        };
         textEditorView.setTypeface(newTypeface);
         editorMenu.ifPresent(x -> x.onFontStyleChanged(newStyle));
     }
@@ -775,8 +765,7 @@ public final class EditorActivity extends Activity implements
 
     private void showReadErrorMessage(EditorFile editorFile,
                                       Throwable throwable) {
-        if (throwable instanceof EditorFileTooLargeException) {
-            final EditorFileTooLargeException ftl = (EditorFileTooLargeException) throwable;
+        if (throwable instanceof EditorFileTooLargeException ftl) {
             showFatalErrorMessage(getString(R.string.error_read_size,
                     editorFile.getName(),
                     ftl.getFileSize() / ONE_MB,
@@ -800,5 +789,24 @@ public final class EditorActivity extends Activity implements
 
     private void showTmpMessage(@StringRes int message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    /* UI */
+
+    private void enableEdgeToEdge() {
+        if (Build.VERSION.SDK_INT < 35) {
+            return;
+        }
+
+        UiUtils.applyInsets(textEditorView, (mlp, insets) -> {
+            mlp.topMargin = insets.top;
+            mlp.leftMargin = insets.left;
+            mlp.rightMargin = insets.right;
+        });
+        UiUtils.applyInsets(summaryView, (mlp, insets) -> {
+            mlp.leftMargin = insets.left;
+            mlp.bottomMargin = insets.bottom;
+            mlp.rightMargin = insets.right;
+        });
     }
 }

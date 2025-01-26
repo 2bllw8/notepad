@@ -18,6 +18,7 @@ def appSrcDirs = [
         "$basePkg/markdown",
         "$basePkg/shell",
         "$basePkg/task",
+        "$basePkg/ui",
 ]
 
 android {

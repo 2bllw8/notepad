@@ -6,8 +6,10 @@ package exe.bbllw8.notepad.help;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,10 +17,13 @@ import androidx.annotation.Nullable;
 
 import exe.bbllw8.notepad.R;
 import exe.bbllw8.notepad.task.TaskExecutor;
+import exe.bbllw8.notepad.ui.UiUtils;
 
 public final class EditorHelpActivity extends Activity {
 
     private final TaskExecutor taskExecutor = new TaskExecutor();
+
+    private ViewGroup rootView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -26,7 +31,11 @@ public final class EditorHelpActivity extends Activity {
 
         setContentView(R.layout.activity_help);
 
-        final TextView contentView = findViewById(R.id.helpContent);
+        rootView = findViewById(R.id.helpRoot);
+        TextView contentView = findViewById(R.id.helpContent);
+
+        enableEdgeToEdge();
+
         final ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -54,4 +63,18 @@ public final class EditorHelpActivity extends Activity {
             return super.onMenuItemSelected(featureId, item);
         }
     }
+
+    private void enableEdgeToEdge() {
+        if (Build.VERSION.SDK_INT < 35) {
+            return;
+        }
+
+        UiUtils.applyInsets(rootView, (mlp, insets) -> {
+            mlp.topMargin = insets.top;
+            mlp.leftMargin = insets.left;
+            mlp.bottomMargin = insets.bottom;
+            mlp.rightMargin = insets.right;
+        });
+    }
+
 }

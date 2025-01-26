@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.provider.OpenableColumns;
 
 import java.io.FileNotFoundException;
-import java.io.UncheckedIOException;
 import java.util.concurrent.Callable;
 
 import exe.bbllw8.either.Try;

@@ -46,7 +46,7 @@ public final class EditorFile implements Parcelable {
 
     // Parcelable
 
-    protected EditorFile(Parcel in) {
+    EditorFile(Parcel in) {
         uri = in.readParcelable(Uri.class.getClassLoader());
         name = in.readString();
         size = in.readLong();

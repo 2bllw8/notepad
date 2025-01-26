@@ -54,7 +54,7 @@ public final class HistoryStack implements Parcelable {
         return size > 0;
     }
 
-    protected HistoryStack(Parcel in) {
+    HistoryStack(Parcel in) {
         stack = in.createTypedArray(HistoryEntry.CREATOR);
         capacity = in.readInt();
         i = in.readInt();

@@ -13,13 +13,13 @@ public interface EditorCommandsExecutor {
     default boolean runEditorCommand(String command, String content, int cursor) {
         return EditorCommandParser.parse(command).map(either -> {
             either.forEach(
-                    find -> runFindCommand(new FindCommandTask(find.getToFind(), content, cursor)),
+                    find -> runFindCommand(new FindCommandTask(find.toFind(), content, cursor)),
                     substitution -> runSubstituteCommand(new SubstituteCommandTask(
-                            substitution.getToFind(),
-                            substitution.getSubstituteWith(),
+                            substitution.toFind(),
+                            substitution.substituteWith(),
                             content,
                             cursor,
-                            substitution.getCount())));
+                            substitution.count())));
             return true;
         }).orElse(false);
     }

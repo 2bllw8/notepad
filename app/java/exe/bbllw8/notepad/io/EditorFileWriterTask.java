@@ -7,10 +7,8 @@ package exe.bbllw8.notepad.io;
 import android.content.ContentResolver;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UncheckedIOException;
 import java.util.concurrent.Callable;
 
 import exe.bbllw8.either.Try;
