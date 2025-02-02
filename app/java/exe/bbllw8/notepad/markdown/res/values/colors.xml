@@ -1,8 +1,0 @@
-<!--
-  ~ Copyright (c) 2021 2bllw8
-  ~ SPDX-License-Identifier: GPL-3.0-only
-  -->
-<resources>
-    <color name="markdown_code">#328C8C8C</color>
-    <color name="markdown_quote">#839145</color>
-</resources>

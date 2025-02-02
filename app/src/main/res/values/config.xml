@@ -3,6 +3,8 @@
   ~ SPDX-License-Identifier: GPL-3.0-only
   -->
 <resources>
+    <!-- Enable the shell by default -->
+    <bool name="config_shell_enabled_default">true</bool>
     <!-- Max file size: 8MB -->
     <integer name="config_max_file_size">8388608</integer>
     <!-- History buffer size -->
