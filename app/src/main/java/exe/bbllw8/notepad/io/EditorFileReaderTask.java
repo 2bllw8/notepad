@@ -6,6 +6,7 @@ package exe.bbllw8.notepad.io;
 
 import android.content.ContentResolver;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Callable;
 
@@ -34,6 +35,9 @@ public final class EditorFileReaderTask implements Callable<Try<String>> {
             } else {
                 final StringBuilder sb = new StringBuilder();
                 try (final InputStream reader = cr.openInputStream(editorFile.getUri())) {
+                    if (reader == null) {
+                        throw new IOException("Failed top open " + editorFile.getUri());
+                    }
                     final byte[] buffer = new byte[4096];
                     int read = reader.read(buffer, 0, 4096);
                     while (read > 0) {

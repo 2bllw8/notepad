@@ -4,13 +4,9 @@
 *.iml
 /.idea
 
-# Bazel
-/.aswb
-/.ijwb
-/bazel-*
-
 # Gradle
 .gradle
+build
 /local.properties
 
 # Sign key

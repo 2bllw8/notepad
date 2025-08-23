@@ -8,7 +8,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.8.0'
+        classpath('com.android.tools.build:gradle:8.12.1')
     }
 }
 
@@ -19,32 +19,32 @@ allprojects {
     }
 }
 
-tasks.register('clean', Delete) {
+tasks.register("clean", Delete) {
     delete rootProject.layout.buildDirectory
 }
 
 final Properties localProps = new Properties()
-if (file('local.properties').exists()) {
-    localProps.load(file('local.properties').newDataInputStream())
+if (file("local.properties").exists()) {
+    localProps.load(file("local.properties").newDataInputStream())
 }
 
 ext {
     minSdkVersion = 27
-    targetSdkVersion = 35
+    targetSdkVersion = 36
 
     versionCode = 5
-    versionName = '2.3'
+    versionName = "2.3"
 
     namespace = "exe.bbllw8.notepad"
 
     sourceCompatibilityVersion = JavaVersion.VERSION_17
     targetCompatibilityVersion = JavaVersion.VERSION_17
 
-    keyStoreFile = localProps.getProperty('androidStoreFile')
-    if (keyStoreFile != null && keyStoreFile != '') {
+    keyStoreFile = localProps.getProperty("androidStoreFile")
+    if (keyStoreFile != null && keyStoreFile != "") {
         keyStoreFile = file(keyStoreFile)
     }
-    keyStorePassword = localProps.getProperty('androidStorePassword')
-    keyAlias = localProps.getProperty('androidKeyAlias')
-    keyPassword = localProps.getProperty('androidKeyPassword')
+    keyStorePassword = localProps.getProperty("androidStorePassword")
+    keyAlias = localProps.getProperty("androidKeyAlias")
+    keyPassword = localProps.getProperty("androidKeyPassword")
 }

@@ -7,6 +7,7 @@ package exe.bbllw8.notepad.io;
 import android.content.ContentResolver;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.Callable;
@@ -30,6 +31,10 @@ public final class EditorFileWriterTask implements Callable<Try<Integer>> {
     public Try<Integer> call() {
         return Try.from(() -> {
             try (final OutputStream outputStream = cr.openOutputStream(editorFile.getUri())) {
+                if (outputStream == null) {
+                    throw new IOException("Failed to open " + editorFile.getUri());
+                }
+
                 final String text = content.replaceAll("\n", editorFile.getEol());
 
                 int written = 0;

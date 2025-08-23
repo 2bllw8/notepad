@@ -41,7 +41,7 @@ public final class EditorFileLoaderTask implements Callable<Try<EditorFile>> {
     public Try<EditorFile> call() {
         return Try.from(() -> {
             try (final Cursor infoCursor = cr.query(uri, FILE_INFO_QUERY, null, null, null)) {
-                if (infoCursor.moveToFirst()) {
+                if (infoCursor != null && infoCursor.moveToFirst()) {
                     final String name = infoCursor.getString(0);
                     final long size = infoCursor.getLong(1);
                     return new EditorFile(uri, name, size, eol);

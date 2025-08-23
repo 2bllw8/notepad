@@ -4,6 +4,7 @@
  */
 package exe.bbllw8.notepad.main;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -27,9 +28,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowInsets;
-import android.view.WindowInsetsController;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
@@ -37,6 +35,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,8 +46,6 @@ import androidx.annotation.StringRes;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import exe.bbllw8.notepad.R;
 import exe.bbllw8.notepad.auto.AutoPair;
@@ -104,6 +102,9 @@ public final class EditorActivity extends Activity implements
     private final TaskExecutor taskExecutor = new TaskExecutor();
     private Optional<EditorFile> editorFile = Optional.empty();
     private Optional<EditorMenu> editorMenu = Optional.empty();
+
+    // Type Object because OnBackInvokedCallback does not exist in Android <36
+    private Object onBackInvokedCallback;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -168,6 +169,10 @@ public final class EditorActivity extends Activity implements
         } else {
             // Restoring instance, only register the listeners
             registerTextListeners();
+        }
+
+        if (Build.VERSION.SDK_INT >= 36) {
+            onBackInvokedCallback = (OnBackInvokedCallback) this::showQuitMessage;
         }
     }
 
@@ -234,8 +239,9 @@ public final class EditorActivity extends Activity implements
     }
 
     @Override
+    @SuppressLint("GestureBackNavigation")
     public void onBackPressed() {
-        if (dirty) {
+        if (Build.VERSION.SDK_INT < 36 && dirty) {
             showQuitMessage();
         } else {
             super.onBackPressed();
@@ -580,6 +586,7 @@ public final class EditorActivity extends Activity implements
     }
 
     @Override
+    @SuppressLint("SwitchIntDef")
     public void onTextSizeChanged(@Config.Size int newSize) {
         final int newTextSizeRes = switch (newSize) {
             case Config.Size.SMALL -> R.dimen.font_size_small;
@@ -592,6 +599,7 @@ public final class EditorActivity extends Activity implements
     }
 
     @Override
+    @SuppressLint("SwitchIntDef")
     public void onTextStyleChanged(@Config.Style int newStyle) {
         final Typeface newTypeface = switch (newStyle) {
             case Config.Style.SANS -> Typeface.SANS_SERIF;
@@ -618,7 +626,7 @@ public final class EditorActivity extends Activity implements
     public void onEolChanged(@Config.Eol String newEol) {
         editorMenu.ifPresent(x -> x.onEolChanged(newEol));
 
-        if (editorFile.map(x -> x.getEol().equals(newEol)).orElse(false)) {
+        if (editorFile.map(x -> newEol.equals(x.getEol())).orElse(false)) {
             // Nothing to do
             return;
         }
@@ -710,23 +718,27 @@ public final class EditorActivity extends Activity implements
     /* Dirty */
 
     private void setNotDirty() {
-        if (dirty) {
-            dirty = false;
-            editorMenu.ifPresent(x -> {
-                x.setUndoAllowed(false);
-                x.setSaveAllowed(alwaysAllowSave);
-            });
+        if (!dirty) {
+            return;
         }
+        dirty = false;
+        editorMenu.ifPresent(x -> {
+            x.setUndoAllowed(false);
+            x.setSaveAllowed(alwaysAllowSave);
+        });
+        unregisterOnBackInvokedCallback();
     }
 
     private void setDirty() {
-        if (!dirty) {
-            dirty = true;
-            editorMenu.ifPresent(x -> {
-                x.setUndoAllowed(true);
-                x.setSaveAllowed(true);
-            });
+        if (dirty) {
+            return;
         }
+        dirty = true;
+        editorMenu.ifPresent(x -> {
+            x.setUndoAllowed(true);
+            x.setSaveAllowed(true);
+        });
+        registerOnBackInvokedCallback();
     }
 
     /* Dialogs */
@@ -809,4 +821,26 @@ public final class EditorActivity extends Activity implements
             mlp.rightMargin = insets.right;
         });
     }
+
+    private void registerOnBackInvokedCallback() {
+        if (Build.VERSION.SDK_INT < 36) {
+            return;
+        }
+
+        getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                OnBackInvokedDispatcher.PRIORITY_DEFAULT,
+                (OnBackInvokedCallback) onBackInvokedCallback
+        );
+    }
+
+    private void unregisterOnBackInvokedCallback() {
+        if (Build.VERSION.SDK_INT < 36) {
+            return;
+        }
+
+        getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(
+                (OnBackInvokedCallback) onBackInvokedCallback
+        );
+    }
+
 }
