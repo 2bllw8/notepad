@@ -91,6 +91,7 @@ public final class EditorActivity extends Activity implements
     private RelativeLayout rootView;
     private View loadView;
     private TextView summaryView;
+    private ViewGroup scrollEditorView;
     private TextEditorView textEditorView;
     private ViewGroup commandBar;
     private EditText commandField;
@@ -116,6 +117,7 @@ public final class EditorActivity extends Activity implements
         rootView = findViewById(R.id.editorRoot);
         loadView = findViewById(R.id.editorProgress);
         summaryView = findViewById(R.id.editorSummary);
+        scrollEditorView = findViewById(R.id.editorVerticalScroll);
         textEditorView = findViewById(R.id.editorContent);
         commandBar = findViewById(R.id.editorCommandBar);
         commandField = findViewById(R.id.editorCommandField);
@@ -643,7 +645,6 @@ public final class EditorActivity extends Activity implements
 
     @Override
     public void onWrapTextChanged(boolean wrap) {
-        final View verticalContent = findViewById(R.id.editorVerticalScroll);
         final ViewGroup currentContainer;
         {
             // The containers must have different ids for instance state restoration
@@ -653,19 +654,19 @@ public final class EditorActivity extends Activity implements
                     : wrapContainer;
         }
 
-        currentContainer.removeView(verticalContent);
+        currentContainer.removeView(scrollEditorView);
         final ViewGroup newContainer;
         if (wrap) {
             newContainer = new FrameLayout(rootView.getContext(), null);
             newContainer.setId(R.id.editorWrapContainer);
-            newContainer.addView(verticalContent,
+            newContainer.addView(scrollEditorView,
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
         } else {
             newContainer = new HorizontalScrollView(rootView.getContext(), null);
             ((HorizontalScrollView) newContainer).setFillViewport(true);
             newContainer.setId(R.id.editorNoWrapContainer);
-            newContainer.addView(verticalContent,
+            newContainer.addView(scrollEditorView,
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
         }
@@ -810,7 +811,7 @@ public final class EditorActivity extends Activity implements
             return;
         }
 
-        UiUtils.applyInsets(textEditorView, (mlp, insets) -> {
+        UiUtils.applyInsets(scrollEditorView, (mlp, insets) -> {
             mlp.topMargin = insets.top;
             mlp.leftMargin = insets.left;
             mlp.rightMargin = insets.right;
