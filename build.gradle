@@ -8,7 +8,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath('com.android.tools.build:gradle:8.12.1')
+        classpath('com.android.tools.build:gradle:8.13.0')
     }
 }
 
@@ -37,8 +37,8 @@ ext {
 
     namespace = "exe.bbllw8.notepad"
 
-    sourceCompatibilityVersion = JavaVersion.VERSION_17
-    targetCompatibilityVersion = JavaVersion.VERSION_17
+    sourceCompatibilityVersion = JavaVersion.VERSION_21
+    targetCompatibilityVersion = JavaVersion.VERSION_21
 
     keyStoreFile = localProps.getProperty("androidStoreFile")
     if (keyStoreFile != null && keyStoreFile != "") {
