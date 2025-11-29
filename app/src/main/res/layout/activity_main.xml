@@ -94,7 +94,7 @@
             android:scrollbars="vertical"
             tools:ignore="UselessParent">
 
-            <exe.bbllw8.notepad.main.TextEditorView
+            <cc.chokoka.notepad.main.TextEditorView
                 android:id="@+id/editorContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

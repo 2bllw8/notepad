@@ -35,7 +35,7 @@ ext {
     versionCode = 5
     versionName = "2.3"
 
-    namespace = "exe.bbllw8.notepad"
+    namespace = "cc.chokoka.notepad"
 
     sourceCompatibilityVersion = JavaVersion.VERSION_21
     targetCompatibilityVersion = JavaVersion.VERSION_21

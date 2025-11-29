@@ -13,7 +13,7 @@
 
         <intent
             android:action="android.intent.action.EDIT"
-            android:targetClass="exe.bbllw8.notepad.shell.OpenFileActivity"
-            android:targetPackage="exe.bbllw8.notepad" />
+            android:targetClass="cc.chokoka.notepad.shell.OpenFileActivity"
+            android:targetPackage="cc.chokoka.notepad" />
     </shortcut>
 </shortcuts>

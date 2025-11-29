@@ -4,7 +4,7 @@
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="exe.bbllw8.notepad">
+    package="cc.chokoka.notepad">
 
     <uses-feature
         android:name="android.hardware.touchscreen"
@@ -24,14 +24,14 @@
         <!-- Help -->
 
         <activity
-            android:name=".help.EditorHelpActivity"
+            android:name="cc.chokoka.notepad.help.EditorHelpActivity"
             android:label="@string/label_help"
             android:theme="@style/AppTheme" />
 
         <!-- Main -->
 
         <activity
-            android:name=".main.EditorActivity"
+            android:name="cc.chokoka.notepad.main.EditorActivity"
             android:exported="true"
             android:theme="@style/AppTheme">
             <intent-filter tools:ignore="AppLinkUrlError">
@@ -53,7 +53,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/label_app"
-            android:targetActivity=".main.EditorActivity">
+            android:targetActivity="cc.chokoka.notepad.main.EditorActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -74,7 +74,7 @@
         <!-- Open -->
 
         <activity
-            android:name=".shell.OpenFileActivity"
+            android:name="cc.chokoka.notepad.shell.OpenFileActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:stateNotNeeded="true"
