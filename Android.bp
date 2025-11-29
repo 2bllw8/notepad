@@ -3,25 +3,13 @@
 
 android_app {
     name: "notepad",
-    manifest: "app/java/exe/bbllw8/notepad/AndroidManifest.xml",
-    sdk_version: "current",
+    manifest: "app/src/main/AndroidManifest.xml",
+    sdk_version: "36",
     srcs: [
-        "app/java/exe/bbllw8/notepad/auto/**/*.java",
-        "app/java/exe/bbllw8/notepad/commands/**/*.java",
-        "app/java/exe/bbllw8/notepad/config/**/*.java",
-        "app/java/exe/bbllw8/notepad/help/**/*.java",
-        "app/java/exe/bbllw8/notepad/history/**/*.java",
-        "app/java/exe/bbllw8/notepad/io/**/*.java",
-        "app/java/exe/bbllw8/notepad/main/**/*.java",
-        "app/java/exe/bbllw8/notepad/markdown/**/*.java",
-        "app/java/exe/bbllw8/notepad/shell/**/*.java",
-        "app/java/exe/bbllw8/notepad/task/**/*.java",
+        "app/src/main/java/cc/chokoka/notepad/**/*.java",
     ],
     resource_dirs: [
-        "app/java/exe/bbllw8/notepad/help/res",
-        "app/java/exe/bbllw8/notepad/main/res",
-        "app/java/exe/bbllw8/notepad/markdown/res",
-        "app/java/exe/bbllw8/notepad/shell/res",
+        "app/src/main/res",
     ],
     aaptflags: [
         "--auto-add-overlay",
@@ -39,6 +27,6 @@ android_app {
 
 java_import {
     name: "notepad-lib-either",
-    jars: ["libs/either-3.2.0.jar"],
+    jars: ["libs/either-3.4.0.jar"],
     sdk_version: "current",
 }
